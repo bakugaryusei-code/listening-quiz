@@ -17,6 +17,8 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = PROJECT_ROOT / "output" / "data"
 APP_DATA_DIR = PROJECT_ROOT / "output" / "app" / "data"
 OUT_HTML = PROJECT_ROOT / "output" / "app" / "index.html"
+# GitHub Pages 配信用 (フォルダは root か docs しか選べない仕様)
+DOCS_HTML = PROJECT_ROOT / "docs" / "index.html"
 
 # テーマ設定（オープン項目16: アプリ名=Listening Quiz / 配色=緑系 #52b788）
 APP_NAME = "Listening Quiz"
@@ -1571,7 +1573,10 @@ def main():
             .replace("__PHRASES_POOL_JSON__", dump(phrases)))
     OUT_HTML.parent.mkdir(parents=True, exist_ok=True)
     OUT_HTML.write_text(html, encoding="utf-8")
+    DOCS_HTML.parent.mkdir(parents=True, exist_ok=True)
+    DOCS_HTML.write_text(html, encoding="utf-8")
     print(f"[build_html] Generated: {OUT_HTML}")
+    print(f"[build_html]            {DOCS_HTML}")
     print(f"[build_html] Size: {OUT_HTML.stat().st_size / 1024:.1f} KB")
     print(f"[build_html] words: {len(words)} / idioms: {len(idioms)} / phrases: {len(phrases)}")
 

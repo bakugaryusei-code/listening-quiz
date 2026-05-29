@@ -1,4 +1,4 @@
-# 英会話 Quiz
+# Listening Quiz
 
 日本語話者向けの **リスニング・発音理解特化** 英会話学習ツール。単一HTMLで完結し、ダブルクリックで動く。
 Kroniiリスニングクイズの派生として構築（設計書: `Ouro-Kronii/output/spec/generic_english_app_spec_v1.md`）。
