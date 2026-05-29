@@ -400,6 +400,45 @@ function speakRepeat(text, rate) { const r = rate != null ? rate : settings.defa
 function speakLadder(text) { speakSeq(text, [0.6, settings.defaultRate]); }
 
 // ============================================================
+// 効果音 (Web Audio APIで合成、外部ファイル不要)
+// ============================================================
+let _audioCtx = null;
+function getAudioCtx() {
+  if (_audioCtx === false) return null;
+  if (!_audioCtx) {
+    try { _audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+    catch (e) { _audioCtx = false; return null; }
+  }
+  return _audioCtx;
+}
+function playSound(type) {
+  if (!settings.sound) return;
+  const ctx = getAudioCtx();
+  if (!ctx) return;
+  if (ctx.state === 'suspended') ctx.resume();
+  const now = ctx.currentTime;
+  function tone(freq, start, dur, peak, wave) {
+    const osc = ctx.createOscillator();
+    const g = ctx.createGain();
+    osc.type = wave || 'sine';
+    osc.frequency.value = freq;
+    osc.connect(g); g.connect(ctx.destination);
+    g.gain.setValueAtTime(0.0001, now + start);
+    g.gain.linearRampToValueAtTime(peak, now + start + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, now + start + dur);
+    osc.start(now + start);
+    osc.stop(now + start + dur + 0.03);
+  }
+  if (type === 'correct') {       // 明るい上昇2音
+    tone(660, 0, 0.12, 0.22, 'sine');
+    tone(988, 0.10, 0.20, 0.22, 'sine');
+  } else {                        // 低い下降ブザー
+    tone(233, 0, 0.20, 0.18, 'square');
+    tone(165, 0.13, 0.24, 0.16, 'square');
+  }
+}
+
+// ============================================================
 // 出題ロジック (SRS対応)
 // ============================================================
 function pickRandomItems(pool, n) {
@@ -832,6 +871,7 @@ function handleAnswer(idx) {
   const target = q.target;
   const correct = (idx === q.correctIndex);
   if (correct) state.sessionScore++;
+  playSound(correct ? 'correct' : 'wrong');
   state.sessionAnswers.push({ itemId: target.id, correct });
 
   app.querySelectorAll('.choice').forEach((c, i) => {
@@ -1053,6 +1093,10 @@ function renderSettings() {
         <div><div class="setting-label">音節・強勢を表示</div><div class="setting-desc">to-MA-to のような音節区切り</div></div>
         <label class="switch"><input type="checkbox" id="set-syll" ${settings.showSyllables?'checked':''}><span class="slider"></span></label>
       </div>
+      <div class="setting-row">
+        <div><div class="setting-label">効果音</div><div class="setting-desc">正解・不正解のサウンド</div></div>
+        <label class="switch"><input type="checkbox" id="set-sound" ${settings.sound?'checked':''}><span class="slider"></span></label>
+      </div>
     </div>
     <div class="card">
       <h3 style="margin-bottom:12px; color:var(--accent);">データ管理</h3>
@@ -1067,6 +1111,7 @@ function renderSettings() {
   document.getElementById('rate-select').addEventListener('change', e => { settings.defaultRate = parseFloat(e.target.value); saveSettings(settings); });
   document.getElementById('set-ipa').addEventListener('change', e => { settings.showIpa = e.target.checked; saveSettings(settings); });
   document.getElementById('set-syll').addEventListener('change', e => { settings.showSyllables = e.target.checked; saveSettings(settings); });
+  document.getElementById('set-sound').addEventListener('change', e => { settings.sound = e.target.checked; saveSettings(settings); if (e.target.checked) playSound('correct'); });
   document.getElementById('export-btn').addEventListener('click', exportProgress);
   const importFile = document.getElementById('import-file');
   document.getElementById('import-btn').addEventListener('click', () => importFile.click());
