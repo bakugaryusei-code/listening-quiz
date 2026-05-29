@@ -288,7 +288,15 @@ function wordCountOf(item) {
 // ============================================================
 const SETTINGS_KEY = 'english.quiz.settings.v1';
 function defaultSettings() {
-  return { showIpa: true, showSyllables: true, defaultRate: 0.9, voiceName: null, sound: true };
+  return {
+    showIpa: true, showSyllables: true, defaultRate: 0.9, voiceName: null, sound: true,
+    // Dropbox同期 (PKCE方式)
+    dbxAppKey: null,         // Dropbox App Console で取得した App key (公開IDなので共有しても安全)
+    dbxRefreshToken: null,   // 長期トークン (この端末ブラウザ内のみに保存)
+    dbxSyncEnabled: false,   // 同期スイッチ
+    dbxLastSync: null,       // 最終同期時刻 (ISO文字列)
+    dbxLastError: null,
+  };
 }
 function loadSettings() {
   const raw = localStorage.getItem(SETTINGS_KEY);
@@ -304,14 +312,22 @@ let settings = loadSettings();
 const STORAGE_KEY = 'english.quiz.progress.v1';
 
 function defaultProgress() {
-  return { version: 1, sessions: 0, totalAnswered: 0, totalCorrect: 0, xp: 0, srs: {}, history: [] };
+  return { version: 1, sessions: 0, totalAnswered: 0, totalCorrect: 0, xp: 0, srs: {}, history: [], updatedAt: 0 };
 }
 function loadProgress() {
   const raw = localStorage.getItem(STORAGE_KEY);
   if (raw) { try { return Object.assign(defaultProgress(), JSON.parse(raw)); } catch (e) {} }
   return defaultProgress();
 }
-function saveProgress(p) { localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); }
+function saveProgress(p, opts) {
+  opts = opts || {};
+  if (!opts.preserveTimestamp) p.updatedAt = Date.now();
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(p));
+  // Dropbox 同期 (有効時のみ、非同期、失敗してもlocalStorageは無事)
+  if (!opts.skipSync && settings.dbxSyncEnabled && settings.dbxRefreshToken) {
+    Dropbox.pushProgress(p).catch(e => console.warn('[sync] push failed:', e.message));
+  }
+}
 
 function today() {
   const d = new Date();
@@ -344,6 +360,200 @@ function sm2Update(srs, quality) {
   return s;
 }
 function isMastered(srs) { return srs && srs.repetitions >= 5 && srs.ef >= 2.5; }
+
+// ============================================================
+// Dropbox 同期 (PKCE方式・App folder限定)
+// 設計:
+//  - App key は公開IDなので localStorage 保存(settings.dbxAppKey)。
+//  - refresh token は端末ブラウザ内のみ(settings.dbxRefreshToken)。コードや公開サイトに一切含めない。
+//  - 競合解決は updatedAt の大きい方を採用。
+//  - オフライン/失敗時は localStorage のみ更新し、次回成功時に再同期。
+// ============================================================
+const Dropbox = (function() {
+  const FILE_PATH = '/progress.json';
+  const PKCE_VERIFIER_KEY = 'english.quiz.dbx_pkce_verifier';
+  let accessToken = null;       // メモリのみ(短期)
+  let accessTokenExpiresAt = 0;
+
+  function base64UrlEncode(buf) {
+    const bytes = new Uint8Array(buf);
+    let s = '';
+    for (let i = 0; i < bytes.length; i++) s += String.fromCharCode(bytes[i]);
+    return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  }
+  async function sha256(str) {
+    const data = new TextEncoder().encode(str);
+    return crypto.subtle.digest('SHA-256', data);
+  }
+  function randomVerifier() {
+    const a = new Uint8Array(64);
+    crypto.getRandomValues(a);
+    return base64UrlEncode(a.buffer);
+  }
+  function redirectUri() {
+    // 現在の origin + path をそのまま使う
+    return location.origin + location.pathname;
+  }
+
+  // 1. ログイン開始: Dropbox認可ページへ
+  async function startLogin(appKey) {
+    if (!appKey) throw new Error('App key が設定されていません');
+    const verifier = randomVerifier();
+    const challenge = base64UrlEncode(await sha256(verifier));
+    localStorage.setItem(PKCE_VERIFIER_KEY, verifier);
+    settings.dbxAppKey = appKey;
+    saveSettings(settings);
+    const url = new URL('https://www.dropbox.com/oauth2/authorize');
+    url.searchParams.set('client_id', appKey);
+    url.searchParams.set('response_type', 'code');
+    url.searchParams.set('code_challenge', challenge);
+    url.searchParams.set('code_challenge_method', 'S256');
+    url.searchParams.set('redirect_uri', redirectUri());
+    url.searchParams.set('token_access_type', 'offline');  // refresh token を得る
+    location.href = url.toString();
+  }
+
+  // 2. リダイレクトで戻ってきたとき: code を refresh token に交換
+  async function handleRedirect() {
+    const params = new URLSearchParams(location.search);
+    const code = params.get('code');
+    if (!code) return false;
+    const verifier = localStorage.getItem(PKCE_VERIFIER_KEY);
+    const appKey = settings.dbxAppKey;
+    if (!verifier || !appKey) return false;
+    try {
+      const body = new URLSearchParams({
+        code, grant_type: 'authorization_code',
+        client_id: appKey, code_verifier: verifier,
+        redirect_uri: redirectUri(),
+      });
+      const r = await fetch('https://api.dropboxapi.com/oauth2/token', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: body.toString(),
+      });
+      if (!r.ok) throw new Error('token交換失敗 HTTP ' + r.status);
+      const data = await r.json();
+      settings.dbxRefreshToken = data.refresh_token;
+      settings.dbxSyncEnabled = true;
+      settings.dbxLastError = null;
+      saveSettings(settings);
+      accessToken = data.access_token;
+      accessTokenExpiresAt = Date.now() + (data.expires_in - 60) * 1000;
+      localStorage.removeItem(PKCE_VERIFIER_KEY);
+      // URLから ?code= を消す
+      history.replaceState({}, '', location.origin + location.pathname);
+      return true;
+    } catch (e) {
+      settings.dbxLastError = '接続失敗: ' + e.message;
+      saveSettings(settings);
+      return false;
+    }
+  }
+
+  async function getAccessToken() {
+    if (accessToken && Date.now() < accessTokenExpiresAt) return accessToken;
+    if (!settings.dbxRefreshToken || !settings.dbxAppKey) throw new Error('未接続');
+    const body = new URLSearchParams({
+      grant_type: 'refresh_token',
+      refresh_token: settings.dbxRefreshToken,
+      client_id: settings.dbxAppKey,
+    });
+    const r = await fetch('https://api.dropboxapi.com/oauth2/token', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+      body: body.toString(),
+    });
+    if (!r.ok) throw new Error('refresh失敗 HTTP ' + r.status);
+    const data = await r.json();
+    accessToken = data.access_token;
+    accessTokenExpiresAt = Date.now() + (data.expires_in - 60) * 1000;
+    return accessToken;
+  }
+
+  async function pullProgress() {
+    const token = await getAccessToken();
+    const r = await fetch('https://content.dropboxapi.com/2/files/download', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Dropbox-API-Arg': JSON.stringify({path: FILE_PATH}),
+      },
+    });
+    if (r.status === 409) return null;  // ファイル無し(初回)
+    if (!r.ok) throw new Error('pull失敗 HTTP ' + r.status);
+    const text = await r.text();
+    return JSON.parse(text);
+  }
+
+  async function pushProgress(p) {
+    const token = await getAccessToken();
+    const r = await fetch('https://content.dropboxapi.com/2/files/upload', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/octet-stream',
+        'Dropbox-API-Arg': JSON.stringify({
+          path: FILE_PATH,
+          mode: 'overwrite',
+          mute: true,
+        }),
+      },
+      body: JSON.stringify(p),
+    });
+    if (!r.ok) throw new Error('push失敗 HTTP ' + r.status);
+    settings.dbxLastSync = new Date().toISOString();
+    settings.dbxLastError = null;
+    saveSettings(settings);
+    return true;
+  }
+
+  // 起動時の同期: Dropbox側が新しければ取得して上書き
+  async function syncOnStartup() {
+    if (!settings.dbxSyncEnabled || !settings.dbxRefreshToken) return false;
+    try {
+      const remote = await pullProgress();
+      const local = loadProgress();
+      if (!remote) {
+        // 初回: ローカルをpush
+        await pushProgress(local);
+        return true;
+      }
+      const localT = local.updatedAt || 0;
+      const remoteT = remote.updatedAt || 0;
+      if (remoteT > localT) {
+        // リモートが新しい → ローカル上書き(タイムスタンプは保持)
+        saveProgress(remote, {preserveTimestamp: true, skipSync: true});
+        settings.dbxLastSync = new Date().toISOString();
+        saveSettings(settings);
+        return 'pulled';
+      } else if (localT > remoteT) {
+        await pushProgress(local);
+        return 'pushed';
+      } else {
+        settings.dbxLastSync = new Date().toISOString();
+        saveSettings(settings);
+        return 'unchanged';
+      }
+    } catch (e) {
+      settings.dbxLastError = '同期失敗: ' + e.message;
+      saveSettings(settings);
+      console.warn('[sync] startup failed:', e.message);
+      return false;
+    }
+  }
+
+  function disconnect() {
+    settings.dbxRefreshToken = null;
+    settings.dbxSyncEnabled = false;
+    settings.dbxLastSync = null;
+    settings.dbxLastError = null;
+    accessToken = null;
+    saveSettings(settings);
+  }
+
+  return { startLogin, handleRedirect, pullProgress, pushProgress, syncOnStartup, disconnect };
+})();
 
 // ============================================================
 // プレイヤーレベル (XP)
@@ -1113,6 +1323,63 @@ function renderDashboard() {
 // ============================================================
 // 設定画面
 // ============================================================
+function renderDropboxCard() {
+  const connected = !!settings.dbxRefreshToken;
+  const lastSync = settings.dbxLastSync ? new Date(settings.dbxLastSync).toLocaleString('ja-JP') : 'なし';
+  const errLine = settings.dbxLastError ? `<p class="small-text" style="color:var(--bad); margin-top:6px;">⚠ ${escapeHtml(settings.dbxLastError)}</p>` : '';
+  if (!connected) {
+    return `<div class="card">
+      <h3 style="margin-bottom:8px; color:var(--accent);">☁️ Dropbox 同期 (3端末で進捗共有)</h3>
+      <p class="small-text" style="margin-bottom:10px; line-height:1.6;">
+        進捗を自分のDropbox(アプリ専用フォルダ)に保存して、PC/携帯で共有します。
+        鍵はこの端末ブラウザ内のみに保存され、コードや公開サイトには一切含まれません。
+      </p>
+      <p class="small-text" style="margin-bottom:6px;">App key (Dropbox App Console で取得):</p>
+      <input type="text" id="dbx-app-key" value="${escapeHtml(settings.dbxAppKey || '')}" placeholder="例: ab12cd34ef56gh7"
+        style="width:100%; padding:9px 11px; background:var(--panel2); color:var(--text); border:1px solid var(--border); border-radius:6px; font-family:monospace; font-size:0.88em;">
+      <button class="next-btn" id="dbx-connect" style="margin-top:10px;">🔗 Dropboxと接続</button>
+      ${errLine}
+    </div>`;
+  }
+  return `<div class="card">
+    <h3 style="margin-bottom:8px; color:var(--accent);">☁️ Dropbox 同期</h3>
+    <p style="color:var(--good); font-size:0.92em; margin-bottom:6px;">✓ 接続済み</p>
+    <p class="small-text" style="margin-bottom:10px;">最終同期: ${lastSync}</p>
+    <div class="setting-row" style="border:none; padding:6px 0;">
+      <div><div class="setting-label">自動同期</div><div class="setting-desc">起動時に取得・保存時に送信</div></div>
+      <label class="switch"><input type="checkbox" id="dbx-toggle" ${settings.dbxSyncEnabled?'checked':''}><span class="slider"></span></label>
+    </div>
+    <button class="next-btn" id="dbx-sync-now" style="background:var(--panel2); color:var(--text); margin-top:8px;">🔄 いま同期する</button>
+    <button class="next-btn" id="dbx-disconnect" style="background:var(--bad-bg); color:var(--bad-text); margin-top:8px;">🔌 切断 (この端末から鍵を削除)</button>
+    ${errLine}
+  </div>`;
+}
+
+function bindDropboxEvents() {
+  const connectBtn = document.getElementById('dbx-connect');
+  if (connectBtn) connectBtn.addEventListener('click', () => {
+    const key = (document.getElementById('dbx-app-key').value || '').trim();
+    if (!key) { alert('App keyを入力してください'); return; }
+    Dropbox.startLogin(key).catch(e => alert('接続失敗: ' + e.message));
+  });
+  const toggle = document.getElementById('dbx-toggle');
+  if (toggle) toggle.addEventListener('change', e => { settings.dbxSyncEnabled = e.target.checked; saveSettings(settings); });
+  const syncBtn = document.getElementById('dbx-sync-now');
+  if (syncBtn) syncBtn.addEventListener('click', async () => {
+    syncBtn.disabled = true; syncBtn.textContent = '同期中…';
+    const r = await Dropbox.syncOnStartup();
+    syncBtn.disabled = false;
+    render();
+    alert(r ? '同期しました (' + r + ')' : '同期に失敗しました');
+  });
+  const dis = document.getElementById('dbx-disconnect');
+  if (dis) dis.addEventListener('click', () => {
+    if (confirm('この端末からDropbox接続を解除します。進捗データは消えません。')) {
+      Dropbox.disconnect(); render();
+    }
+  });
+}
+
 function renderSettings() {
   const voices = window.speechSynthesis ? window.speechSynthesis.getVoices().filter(v => v.lang.startsWith('en')) : [];
   const voiceOptions = ['<option value="">自動選択 (en-US Female優先)</option>']
@@ -1147,6 +1414,7 @@ function renderSettings() {
         <label class="switch"><input type="checkbox" id="set-sound" ${settings.sound?'checked':''}><span class="slider"></span></label>
       </div>
     </div>
+    ${renderDropboxCard()}
     <div class="card">
       <h3 style="margin-bottom:12px; color:var(--accent);">データ管理</h3>
       <button class="next-btn" id="export-btn" style="background:var(--panel2); color:var(--text);">💾 進捗をエクスポート</button>
@@ -1171,6 +1439,7 @@ function renderSettings() {
       alert('進捗を初期化しました'); render();
     }
   });
+  bindDropboxEvents();
 }
 
 function exportProgress() {
@@ -1226,6 +1495,22 @@ if (window.speechSynthesis) {
   window.speechSynthesis.getVoices();
   window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
 }
+
+// Dropbox 起動シーケンス: OAuthリダイレクトの戻り処理 → 自動同期
+(async () => {
+  if (location.search.includes('code=')) {
+    const ok = await Dropbox.handleRedirect();
+    if (ok) {
+      alert('Dropboxと接続しました');
+      await Dropbox.syncOnStartup();
+      render();
+      return;
+    }
+  }
+  if (settings.dbxSyncEnabled && settings.dbxRefreshToken) {
+    Dropbox.syncOnStartup().then(r => { if (r === 'pulled') render(); });
+  }
+})();
 
 render();
 </script>
