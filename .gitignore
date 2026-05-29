@@ -12,6 +12,9 @@
 # Runtime output
 output/temp/
 
+# 生成バッチの中間ファイル (集約後の pool_*.json が成果物)
+output/data/batches/
+
 # Python
 __pycache__/
 *.py[cod]
