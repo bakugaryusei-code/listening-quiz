@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>英会話 Quiz</title>
+<style>
+  :root {
+    --bg: #161b22;
+    --panel: #1e2530;
+    --panel2: #283142;
+    --border: #364153;
+    --text: #e6edf3;
+    --muted: #8b98ad;
+    --accent: #4a90e2;
+    --accent-soft: #2d4a6b;
+    --accent-text: #0d1117;
+    --good: #52b788;
+    --good-bg: #1e3a2c;
+    --good-text: #b8f0d0;
+    --bad: #e5615e;
+    --bad-bg: #3a1e1e;
+    --bad-text: #f0c8c8;
+    --warn: #e6b84c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Yu Gothic', 'Hiragino Sans', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 12px;
+  }
+  #app { width: 100%; max-width: 620px; margin-top: 12px; }
+  h1 { color: var(--accent); font-size: 1.7em; text-align: center; margin-bottom: 6px; }
+  .subtitle { text-align: center; color: var(--muted); margin-bottom: 22px; font-size: 0.9em; }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 22px;
+    margin-bottom: 14px;
+  }
+  .mode-btn {
+    width: 100%;
+    padding: 16px;
+    margin-bottom: 10px;
+    background: var(--panel2);
+    color: var(--text);
+    border: 2px solid transparent;
+    border-radius: 10px;
+    font-size: 1.05em;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: left;
+    font-family: inherit;
+  }
+  .mode-btn:hover { border-color: var(--accent); background: var(--accent-soft); }
+  .mode-btn .mode-title { font-weight: bold; display: block; margin-bottom: 4px; }
+  .mode-btn .mode-desc { font-size: 0.85em; color: var(--muted); }
+
+  .stats {
+    display: flex; justify-content: space-around;
+    padding: 14px; background: var(--panel); border-radius: 10px; margin-top: 16px;
+  }
+  .stat-item { text-align: center; }
+  .stat-value { font-size: 1.4em; font-weight: bold; color: var(--accent); }
+  .stat-label { font-size: 0.8em; color: var(--muted); }
+
+  .question-header {
+    display: flex; justify-content: space-between;
+    color: var(--muted); font-size: 0.85em; margin-bottom: 10px;
+  }
+  .question-main { text-align: center; margin: 12px 0 8px; }
+  .word-display { font-size: 1.9em; color: var(--text); margin: 10px 0 4px; font-weight: 300; letter-spacing: 0.02em; }
+  .phrase-display { font-size: 1.45em; color: var(--text); margin: 10px 0 4px; font-weight: 400; }
+  .sentence-display { font-size: 1.15em; color: var(--text); margin: 10px 0 4px; line-height: 1.5; padding: 0 4px; }
+
+  .pron-line { font-size: 0.95em; color: var(--accent); margin: 4px 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+  .syll-line { font-size: 0.9em; color: var(--warn); margin: 2px 0 4px; letter-spacing: 0.03em; }
+
+  .category-tabs { display: flex; gap: 6px; margin-bottom: 14px; }
+  .category-tab {
+    flex: 1; padding: 11px 8px; background: var(--panel);
+    color: var(--muted); border: 2px solid var(--border);
+    border-radius: 8px; font-size: 0.92em; font-weight: bold;
+    cursor: pointer; font-family: inherit; transition: all 0.15s;
+  }
+  .category-tab:hover { border-color: var(--accent); }
+  .category-tab.active { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+
+  .word-meta { font-size: 0.8em; color: var(--muted); margin-bottom: 8px; }
+
+  .play-btn {
+    background: var(--accent); color: var(--accent-text); border: none;
+    padding: 11px 22px; border-radius: 50px; font-size: 1.0em; cursor: pointer;
+    margin: 6px 4px; display: inline-flex; align-items: center; gap: 8px;
+    font-weight: bold; box-shadow: 0 4px 16px rgba(74,144,226,0.3); font-family: inherit;
+  }
+  .play-btn:hover { background: #5b9ee8; }
+  .play-btn:active { transform: scale(0.97); }
+  .play-btn.small { padding: 8px 14px; font-size: 0.88em; box-shadow: none; }
+  .play-btn.ghost { background: var(--panel2); color: var(--text); box-shadow: none; border: 1px solid var(--border); }
+  .play-btn.ghost.on { border-color: var(--accent); color: var(--accent); }
+
+  .pron-controls { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin: 12px 0 6px; }
+  .toggle-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin: 4px 0; }
+
+  .choices { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 16px; }
+  .choice {
+    padding: 12px 14px; background: var(--panel2); border: 2px solid var(--border);
+    border-radius: 10px; cursor: pointer; transition: all 0.15s; font-size: 0.95em;
+    text-align: left; color: var(--text); font-family: inherit; width: 100%;
+    min-height: 56px; display: flex; align-items: center;
+  }
+  .choices-stacked { grid-template-columns: 1fr !important; }
+  .choices-stacked .choice { min-height: 44px; font-size: 0.9em; padding: 11px 13px; }
+  @media (max-width: 480px) { .choices { grid-template-columns: 1fr; } }
+  .choice:hover:not(.disabled) { border-color: var(--accent); background: var(--accent-soft); }
+  .choice.disabled { cursor: default; opacity: 0.75; }
+  .choice.correct { border-color: var(--good); background: var(--good-bg); color: var(--good-text); }
+  .choice.wrong { border-color: var(--bad); background: var(--bad-bg); color: var(--bad-text); }
+  .choice-key {
+    display: inline-block; width: 22px; height: 22px; background: var(--accent-soft);
+    color: var(--accent); border-radius: 50%; text-align: center; line-height: 22px;
+    font-size: 0.85em; margin-right: 12px; font-weight: bold; flex-shrink: 0;
+  }
+  .choice.correct .choice-key { background: var(--good); color: #0d2a1a; }
+  .choice.wrong .choice-key { background: var(--bad); color: #2a0d0d; }
+
+  .feedback { margin-top: 12px; padding: 10px 14px; border-radius: 10px; background: var(--panel2); font-size: 0.95em; }
+  .feedback.correct { background: var(--good-bg); color: var(--good-text); }
+  .feedback.wrong { background: var(--bad-bg); color: var(--bad-text); }
+  .feedback strong { color: #fff; }
+  .feedback .example { margin-top: 8px; font-size: 0.85em; color: var(--muted); font-style: italic; }
+  .feedback .example-ja { font-style: normal; color: var(--muted); }
+
+  .next-btn {
+    width: 100%; padding: 12px; background: var(--accent); color: var(--accent-text);
+    border: none; border-radius: 10px; font-size: 1em; font-weight: bold;
+    cursor: pointer; margin-top: 10px; font-family: inherit;
+  }
+  .next-btn:hover { background: #5b9ee8; }
+  .next-btn:active { transform: scale(0.99); }
+
+  .progress-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; margin-bottom: 14px; }
+  .progress-fill { height: 100%; background: var(--accent); transition: width 0.3s; }
+
+  .result-score { font-size: 3em; text-align: center; color: var(--accent); margin: 20px 0; }
+  .result-message { text-align: center; color: var(--muted); margin-bottom: 24px; }
+
+  .small-text { font-size: 0.8em; color: var(--muted); }
+  .center { text-align: center; }
+
+  .srs-badge { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .badge { display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 0.72em; font-weight: bold; }
+  .badge-due { background: var(--bad); color: #fff; }
+  .badge-fresh { background: var(--accent-soft); color: var(--accent); }
+  .badge-learning { background: var(--warn); color: #3a2e08; }
+  .badge-mastered { background: var(--good); color: #0d2a1a; }
+
+  table { border-collapse: collapse; }
+  table th, table td { padding: 8px 4px; border-bottom: 1px solid var(--border); }
+
+  /* フィルタパネル */
+  .filter-summary {
+    display: flex; justify-content: space-between; align-items: center;
+    cursor: pointer; color: var(--accent); font-size: 0.9em; font-weight: bold;
+  }
+  .chip {
+    display: inline-block; padding: 5px 11px; margin: 3px; border-radius: 16px;
+    background: var(--panel2); color: var(--muted); border: 1px solid var(--border);
+    font-size: 0.82em; cursor: pointer; font-family: inherit; transition: all 0.12s;
+  }
+  .chip:hover { border-color: var(--accent); }
+  .chip.on { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+  .filter-group-label { font-size: 0.78em; color: var(--muted); margin: 8px 0 4px; }
+
+  /* 設定 */
+  .setting-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .setting-row:last-child { border-bottom: none; }
+  .setting-label { font-size: 0.95em; }
+  .setting-desc { font-size: 0.78em; color: var(--muted); margin-top: 2px; }
+  .switch { position: relative; width: 46px; height: 26px; flex-shrink: 0; }
+  .switch input { display: none; }
+  .slider { position: absolute; inset: 0; background: var(--border); border-radius: 26px; cursor: pointer; transition: 0.2s; }
+  .slider:before { content: ''; position: absolute; width: 20px; height: 20px; left: 3px; top: 3px; background: #fff; border-radius: 50%; transition: 0.2s; }
+  .switch input:checked + .slider { background: var(--accent); }
+  .switch input:checked + .slider:before { transform: translateX(20px); }
+  select.speed-select {
+    background: var(--panel2); color: var(--text); border: 1px solid var(--border);
+    padding: 7px 10px; border-radius: 6px; font-family: inherit; font-size: 0.9em;
+  }
+
+  @media (max-width: 768px) {
+    #app { max-width: 100%; margin-top: 6px; }
+    body { padding: 8px; }
+    h1 { font-size: 1.4em; }
+    .subtitle { font-size: 0.85em; margin-bottom: 16px; }
+    .card { padding: 14px 16px; margin-bottom: 10px; }
+    .word-display { font-size: 1.7em; }
+    .phrase-display { font-size: 1.3em; }
+    .sentence-display { font-size: 1.05em; }
+    .mode-btn { padding: 14px; }
+  }
+  @media (max-width: 480px) {
+    body { padding: 6px; }
+    h1 { font-size: 1.22em; margin-bottom: 2px; }
+    .subtitle { font-size: 0.78em; margin-bottom: 12px; }
+    .card { padding: 12px 14px; border-radius: 12px; }
+    .word-display { font-size: 1.5em; }
+    .phrase-display { font-size: 1.18em; }
+    .sentence-display { font-size: 1.0em; }
+    .choices { grid-template-columns: 1fr; gap: 6px; }
+    .choice { min-height: 48px; padding: 11px 12px; font-size: 0.92em; }
+    .choices-stacked .choice { min-height: 40px; font-size: 0.86em; padding: 9px 11px; }
+    .mode-btn { padding: 12px; }
+    .next-btn { padding: 11px; font-size: 0.95em; }
+    .stats .stat-value { font-size: 1.2em; }
+    .badge { font-size: 0.68em; padding: 2px 6px; }
+    .play-btn { padding: 10px 16px; font-size: 0.92em; }
+    .play-btn.small { padding: 7px 12px; font-size: 0.82em; }
+  }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script type="application/json" id="words-pool">
+[{"id":"w_tomato_NOUN","category":"word","lemma":"tomato","surface":"tomato","pos":"NOUN","cefr":"A1","ipa":"/təˈmeɪtoʊ/","syllables":"to-MA-to","stress_pos":1,"meaning_ja":"トマト","tags":["food"],"example_en":"I had a tomato sandwich for lunch.","example_ja":"昼食にトマトサンドを食べた。","tts_text":"tomato"},{"id":"w_apple_NOUN","category":"word","lemma":"apple","surface":"apple","pos":"NOUN","cefr":"A1","ipa":"/ˈæpəl/","syllables":"AP-ple","stress_pos":0,"meaning_ja":"りんご","tags":["food"],"example_en":"She eats an apple every morning.","example_ja":"彼女は毎朝りんごを食べる。","tts_text":"apple"},{"id":"w_water_NOUN","category":"word","lemma":"water","surface":"water","pos":"NOUN","cefr":"A1","ipa":"/ˈwɔːtər/","syllables":"WA-ter","stress_pos":0,"meaning_ja":"水","tags":["food","nature"],"example_en":"Can I have a glass of water, please?","example_ja":"お水を一杯いただけますか？","tts_text":"water"},{"id":"w_bread_NOUN","category":"word","lemma":"bread","surface":"bread","pos":"NOUN","cefr":"A1","ipa":"/brɛd/","syllables":"BREAD","stress_pos":0,"meaning_ja":"パン","tags":["food"],"example_en":"We bought fresh bread at the bakery.","example_ja":"パン屋で焼きたてのパンを買った。","tts_text":"bread"},{"id":"w_rice_NOUN","category":"word","lemma":"rice","surface":"rice","pos":"NOUN","cefr":"A1","ipa":"/raɪs/","syllables":"RICE","stress_pos":0,"meaning_ja":"米／ごはん","tags":["food"],"example_en":"In Japan, rice is eaten almost every day.","example_ja":"日本では米をほぼ毎日食べる。","tts_text":"rice"},{"id":"w_coffee_NOUN","category":"word","lemma":"coffee","surface":"coffee","pos":"NOUN","cefr":"A1","ipa":"/ˈkɔːfi/","syllables":"COF-fee","stress_pos":0,"meaning_ja":"コーヒー","tags":["food"],"example_en":"I drink coffee to wake up in the morning.","example_ja":"朝、目を覚ますためにコーヒーを飲む。","tts_text":"coffee"},{"id":"w_hand_NOUN","category":"word","lemma":"hand","surface":"hand","pos":"NOUN","cefr":"A1","ipa":"/hænd/","syllables":"HAND","stress_pos":0,"meaning_ja":"手","tags":["body"],"example_en":"He raised his hand to ask a question.","example_ja":"彼は質問するために手を挙げた。","tts_text":"hand"},{"id":"w_eye_NOUN","category":"word","lemma":"eye","surface":"eye","pos":"NOUN","cefr":"A1","ipa":"/aɪ/","syllables":"EYE","stress_pos":0,"meaning_ja":"目","tags":["body"],"example_en":"She has beautiful blue eyes.","example_ja":"彼女は美しい青い目をしている。","tts_text":"eye"},{"id":"w_head_NOUN","category":"word","lemma":"head","surface":"head","pos":"NOUN","cefr":"A1","ipa":"/hɛd/","syllables":"HEAD","stress_pos":0,"meaning_ja":"頭","tags":["body"],"example_en":"My head hurts after the long meeting.","example_ja":"長い会議のあと頭が痛い。","tts_text":"head"},{"id":"w_heart_NOUN","category":"word","lemma":"heart","surface":"heart","pos":"NOUN","cefr":"A2","ipa":"/hɑːrt/","syllables":"HEART","stress_pos":0,"meaning_ja":"心臓／心","tags":["body"],"example_en":"My heart was beating fast before the speech.","example_ja":"スピーチの前、心臓がどきどきしていた。","tts_text":"heart"},{"id":"w_mother_NOUN","category":"word","lemma":"mother","surface":"mother","pos":"NOUN","cefr":"A1","ipa":"/ˈmʌðər/","syllables":"MO-ther","stress_pos":0,"meaning_ja":"母","tags":["family"],"example_en":"My mother cooks dinner every evening.","example_ja":"母は毎晩夕食を作る。","tts_text":"mother"},{"id":"w_father_NOUN","category":"word","lemma":"father","surface":"father","pos":"NOUN","cefr":"A1","ipa":"/ˈfɑːðər/","syllables":"FA-ther","stress_pos":0,"meaning_ja":"父","tags":["family"],"example_en":"His father works at a hospital.","example_ja":"彼の父は病院で働いている。","tts_text":"father"},{"id":"w_brother_NOUN","category":"word","lemma":"brother","surface":"brother","pos":"NOUN","cefr":"A1","ipa":"/ˈbrʌðər/","syllables":"BRO-ther","stress_pos":0,"meaning_ja":"兄弟","tags":["family"],"example_en":"My brother is two years older than me.","example_ja":"兄は私より2歳年上だ。","tts_text":"brother"},{"id":"w_sister_NOUN","category":"word","lemma":"sister","surface":"sister","pos":"NOUN","cefr":"A1","ipa":"/ˈsɪstər/","syllables":"SIS-ter","stress_pos":0,"meaning_ja":"姉妹","tags":["family"],"example_en":"Her sister lives in another city.","example_ja":"彼女の姉妹は別の街に住んでいる。","tts_text":"sister"},{"id":"w_morning_NOUN","category":"word","lemma":"morning","surface":"morning","pos":"NOUN","cefr":"A1","ipa":"/ˈmɔːrnɪŋ/","syllables":"MOR-ning","stress_pos":0,"meaning_ja":"朝","tags":["time"],"example_en":"I go for a run every morning.","example_ja":"私は毎朝走りに行く。","tts_text":"morning"},{"id":"w_week_NOUN","category":"word","lemma":"week","surface":"week","pos":"NOUN","cefr":"A1","ipa":"/wiːk/","syllables":"WEEK","stress_pos":0,"meaning_ja":"週","tags":["time"],"example_en":"We meet once a week.","example_ja":"私たちは週に一度会う。","tts_text":"week"},{"id":"w_year_NOUN","category":"word","lemma":"year","surface":"year","pos":"NOUN","cefr":"A1","ipa":"/jɪr/","syllables":"YEAR","stress_pos":0,"meaning_ja":"年","tags":["time"],"example_en":"She moved here last year.","example_ja":"彼女は昨年ここに引っ越してきた。","tts_text":"year"},{"id":"w_hour_NOUN","category":"word","lemma":"hour","surface":"hour","pos":"NOUN","cefr":"A1","ipa":"/aʊər/","syllables":"HOUR","stress_pos":0,"meaning_ja":"時間（1時間）","tags":["time"],"example_en":"The trip takes about an hour by train.","example_ja":"その移動は電車で約1時間かかる。","tts_text":"hour"},{"id":"w_rain_NOUN","category":"word","lemma":"rain","surface":"rain","pos":"NOUN","cefr":"A1","ipa":"/reɪn/","syllables":"RAIN","stress_pos":0,"meaning_ja":"雨","tags":["weather","nature"],"example_en":"The rain stopped in the afternoon.","example_ja":"午後には雨がやんだ。","tts_text":"rain"},{"id":"w_sun_NOUN","category":"word","lemma":"sun","surface":"sun","pos":"NOUN","cefr":"A1","ipa":"/sʌn/","syllables":"SUN","stress_pos":0,"meaning_ja":"太陽","tags":["weather","nature"],"example_en":"The sun is shining brightly today.","example_ja":"今日は太陽が明るく輝いている。","tts_text":"sun"},{"id":"w_tree_NOUN","category":"word","lemma":"tree","surface":"tree","pos":"NOUN","cefr":"A1","ipa":"/triː/","syllables":"TREE","stress_pos":0,"meaning_ja":"木","tags":["nature"],"example_en":"There is a big tree in the park.","example_ja":"公園に大きな木が一本ある。","tts_text":"tree"},{"id":"w_river_NOUN","category":"word","lemma":"river","surface":"river","pos":"NOUN","cefr":"A2","ipa":"/ˈrɪvər/","syllables":"RI-ver","stress_pos":0,"meaning_ja":"川","tags":["nature"],"example_en":"We walked along the river at sunset.","example_ja":"夕暮れに川沿いを歩いた。","tts_text":"river"},{"id":"w_know_VERB","category":"word","lemma":"know","surface":"know","pos":"VERB","cefr":"A1","ipa":"/noʊ/","syllables":"KNOW","stress_pos":0,"meaning_ja":"知っている／分かる","tags":[],"example_en":"I know the answer to this question.","example_ja":"私はこの質問の答えを知っている。","tts_text":"know"},{"id":"w_go_VERB","category":"word","lemma":"go","surface":"go","pos":"VERB","cefr":"A1","ipa":"/ɡoʊ/","syllables":"GO","stress_pos":0,"meaning_ja":"行く","tags":[],"example_en":"Let's go to the beach this weekend.","example_ja":"今週末は海に行こう。","tts_text":"go"},{"id":"w_eat_VERB","category":"word","lemma":"eat","surface":"eat","pos":"VERB","cefr":"A1","ipa":"/iːt/","syllables":"EAT","stress_pos":0,"meaning_ja":"食べる","tags":["food"],"example_en":"We usually eat dinner at seven.","example_ja":"私たちはたいてい7時に夕食を食べる。","tts_text":"eat"},{"id":"w_make_VERB","category":"word","lemma":"make","surface":"make","pos":"VERB","cefr":"A1","ipa":"/meɪk/","syllables":"MAKE","stress_pos":0,"meaning_ja":"作る／〜させる","tags":[],"example_en":"She made a cake for the party.","example_ja":"彼女はパーティーのためにケーキを作った。","tts_text":"make"},{"id":"w_take_VERB","category":"word","lemma":"take","surface":"take","pos":"VERB","cefr":"A1","ipa":"/teɪk/","syllables":"TAKE","stress_pos":0,"meaning_ja":"取る／持って行く","tags":[],"example_en":"Take an umbrella; it might rain.","example_ja":"傘を持って行きなさい、雨が降るかもしれない。","tts_text":"take"},{"id":"w_give_VERB","category":"word","lemma":"give","surface":"give","pos":"VERB","cefr":"A1","ipa":"/ɡɪv/","syllables":"GIVE","stress_pos":0,"meaning_ja":"与える／渡す","tags":[],"example_en":"Please give me your phone number.","example_ja":"電話番号を教えてください。","tts_text":"give"},{"id":"w_want_VERB","category":"word","lemma":"want","surface":"want","pos":"VERB","cefr":"A1","ipa":"/wɑːnt/","syllables":"WANT","stress_pos":0,"meaning_ja":"欲しい／〜したい","tags":[],"example_en":"I want to learn how to swim.","example_ja":"私は泳ぎ方を学びたい。","tts_text":"want"},{"id":"w_think_VERB","category":"word","lemma":"think","surface":"think","pos":"VERB","cefr":"A1","ipa":"/θɪŋk/","syllables":"THINK","stress_pos":0,"meaning_ja":"思う／考える","tags":[],"example_en":"I think it's a great idea.","example_ja":"それはいい考えだと思う。","tts_text":"think"},{"id":"w_buy_VERB","category":"word","lemma":"buy","surface":"buy","pos":"VERB","cefr":"A1","ipa":"/baɪ/","syllables":"BUY","stress_pos":0,"meaning_ja":"買う","tags":["shopping"],"example_en":"I need to buy some milk.","example_ja":"牛乳を買わなければならない。","tts_text":"buy"},{"id":"w_find_VERB","category":"word","lemma":"find","surface":"find","pos":"VERB","cefr":"A2","ipa":"/faɪnd/","syllables":"FIND","stress_pos":0,"meaning_ja":"見つける","tags":[],"example_en":"I can't find my keys.","example_ja":"鍵が見つからない。","tts_text":"find"},{"id":"w_bring_VERB","category":"word","lemma":"bring","surface":"bring","pos":"VERB","cefr":"A2","ipa":"/brɪŋ/","syllables":"BRING","stress_pos":0,"meaning_ja":"持ってくる／連れてくる","tags":[],"example_en":"Don't forget to bring your passport.","example_ja":"パスポートを持ってくるのを忘れないで。","tts_text":"bring"},{"id":"w_decide_VERB","category":"word","lemma":"decide","surface":"decide","pos":"VERB","cefr":"A2","ipa":"/dɪˈsaɪd/","syllables":"de-CIDE","stress_pos":1,"meaning_ja":"決める","tags":[],"example_en":"We decided to take the train instead.","example_ja":"私たちは代わりに電車にすることに決めた。","tts_text":"decide"},{"id":"w_explain_VERB","category":"word","lemma":"explain","surface":"explain","pos":"VERB","cefr":"B1","ipa":"/ɪkˈspleɪn/","syllables":"ex-PLAIN","stress_pos":1,"meaning_ja":"説明する","tags":[],"example_en":"Could you explain this rule again?","example_ja":"このルールをもう一度説明してもらえますか？","tts_text":"explain"},{"id":"w_improve_VERB","category":"word","lemma":"improve","surface":"improve","pos":"VERB","cefr":"B1","ipa":"/ɪmˈpruːv/","syllables":"im-PROVE","stress_pos":1,"meaning_ja":"改善する／上達する","tags":[],"example_en":"She wants to improve her English.","example_ja":"彼女は英語を上達させたい。","tts_text":"improve"},{"id":"w_arrive_VERB","category":"word","lemma":"arrive","surface":"arrive","pos":"VERB","cefr":"A2","ipa":"/əˈraɪv/","syllables":"ar-RIVE","stress_pos":1,"meaning_ja":"到着する","tags":["travel"],"example_en":"The train will arrive at noon.","example_ja":"電車は正午に到着する。","tts_text":"arrive"},{"id":"w_borrow_VERB","category":"word","lemma":"borrow","surface":"borrow","pos":"VERB","cefr":"A2","ipa":"/ˈbɔːroʊ/","syllables":"BOR-row","stress_pos":0,"meaning_ja":"借りる","tags":[],"example_en":"Can I borrow your pen for a moment?","example_ja":"ちょっとペンを借りてもいい？","tts_text":"borrow"},{"id":"w_big_ADJ","category":"word","lemma":"big","surface":"big","pos":"ADJ","cefr":"A1","ipa":"/bɪɡ/","syllables":"BIG","stress_pos":0,"meaning_ja":"大きい","tags":[],"example_en":"They live in a big house.","example_ja":"彼らは大きな家に住んでいる。","tts_text":"big"},{"id":"w_small_ADJ","category":"word","lemma":"small","surface":"small","pos":"ADJ","cefr":"A1","ipa":"/smɔːl/","syllables":"SMALL","stress_pos":0,"meaning_ja":"小さい","tags":[],"example_en":"This shirt is too small for me.","example_ja":"このシャツは私には小さすぎる。","tts_text":"small"},{"id":"w_happy_ADJ","category":"word","lemma":"happy","surface":"happy","pos":"ADJ","cefr":"A1","ipa":"/ˈhæpi/","syllables":"HAP-py","stress_pos":0,"meaning_ja":"幸せな／うれしい","tags":["positive"],"example_en":"I'm so happy to see you again.","example_ja":"また会えてとてもうれしい。","tts_text":"happy"},{"id":"w_beautiful_ADJ","category":"word","lemma":"beautiful","surface":"beautiful","pos":"ADJ","cefr":"A1","ipa":"/ˈbjuːtɪfəl/","syllables":"BEAU-ti-ful","stress_pos":0,"meaning_ja":"美しい","tags":["positive"],"example_en":"What a beautiful sunset!","example_ja":"なんて美しい夕日だろう！","tts_text":"beautiful"},{"id":"w_difficult_ADJ","category":"word","lemma":"difficult","surface":"difficult","pos":"ADJ","cefr":"A1","ipa":"/ˈdɪfɪkəlt/","syllables":"DIF-fi-cult","stress_pos":0,"meaning_ja":"難しい","tags":[],"example_en":"This problem is too difficult for me.","example_ja":"この問題は私には難しすぎる。","tts_text":"difficult"},{"id":"w_expensive_ADJ","category":"word","lemma":"expensive","surface":"expensive","pos":"ADJ","cefr":"A2","ipa":"/ɪkˈspɛnsɪv/","syllables":"ex-PEN-sive","stress_pos":1,"meaning_ja":"高価な／値段が高い","tags":["shopping"],"example_en":"That restaurant is really expensive.","example_ja":"あのレストランは本当に高い。","tts_text":"expensive"},{"id":"w_important_ADJ","category":"word","lemma":"important","surface":"important","pos":"ADJ","cefr":"A2","ipa":"/ɪmˈpɔːrtənt/","syllables":"im-POR-tant","stress_pos":1,"meaning_ja":"重要な","tags":[],"example_en":"It's important to arrive on time.","example_ja":"時間通りに着くことが重要だ。","tts_text":"important"},{"id":"w_quiet_ADJ","category":"word","lemma":"quiet","surface":"quiet","pos":"ADJ","cefr":"A2","ipa":"/ˈkwaɪət/","syllables":"QUI-et","stress_pos":0,"meaning_ja":"静かな","tags":[],"example_en":"Please be quiet in the library.","example_ja":"図書館では静かにしてください。","tts_text":"quiet"},{"id":"w_busy_ADJ","category":"word","lemma":"busy","surface":"busy","pos":"ADJ","cefr":"A1","ipa":"/ˈbɪzi/","syllables":"BU-sy","stress_pos":0,"meaning_ja":"忙しい","tags":[],"example_en":"I'm too busy to talk right now.","example_ja":"今は忙しくて話せない。","tts_text":"busy"},{"id":"w_delicious_ADJ","category":"word","lemma":"delicious","surface":"delicious","pos":"ADJ","cefr":"A2","ipa":"/dɪˈlɪʃəs/","syllables":"de-LI-cious","stress_pos":1,"meaning_ja":"とてもおいしい","tags":["food","positive"],"example_en":"This soup is absolutely delicious.","example_ja":"このスープは本当においしい。","tts_text":"delicious"},{"id":"w_quickly_ADV","category":"word","lemma":"quickly","surface":"quickly","pos":"ADV","cefr":"A2","ipa":"/ˈkwɪkli/","syllables":"QUICK-ly","stress_pos":0,"meaning_ja":"すばやく／急いで","tags":[],"example_en":"She finished the test quickly.","example_ja":"彼女はテストをすばやく終えた。","tts_text":"quickly"},{"id":"w_always_ADV","category":"word","lemma":"always","surface":"always","pos":"ADV","cefr":"A1","ipa":"/ˈɔːlweɪz/","syllables":"AL-ways","stress_pos":0,"meaning_ja":"いつも","tags":["time"],"example_en":"He always says good morning.","example_ja":"彼はいつもおはようと言う。","tts_text":"always"},{"id":"w_maybe_ADV","category":"word","lemma":"maybe","surface":"maybe","pos":"ADV","cefr":"A1","ipa":"/ˈmeɪbi/","syllables":"MAY-be","stress_pos":0,"meaning_ja":"たぶん／もしかすると","tags":[],"example_en":"Maybe we should leave now.","example_ja":"もう出たほうがいいかもしれない。","tts_text":"maybe"},{"id":"w_suddenly_ADV","category":"word","lemma":"suddenly","surface":"suddenly","pos":"ADV","cefr":"A2","ipa":"/ˈsʌdənli/","syllables":"SUD-den-ly","stress_pos":0,"meaning_ja":"突然","tags":[],"example_en":"Suddenly, the lights went out.","example_ja":"突然、明かりが消えた。","tts_text":"suddenly"},{"id":"w_carefully_ADV","category":"word","lemma":"carefully","surface":"carefully","pos":"ADV","cefr":"A2","ipa":"/ˈkɛrfəli/","syllables":"CARE-ful-ly","stress_pos":0,"meaning_ja":"注意深く／慎重に","tags":[],"example_en":"Please listen carefully to the instructions.","example_ja":"指示を注意深く聞いてください。","tts_text":"carefully"},{"id":"w_usually_ADV","category":"word","lemma":"usually","surface":"usually","pos":"ADV","cefr":"A1","ipa":"/ˈjuːʒuəli/","syllables":"U-su-al-ly","stress_pos":0,"meaning_ja":"たいてい／普通は","tags":["time"],"example_en":"I usually walk to work.","example_ja":"私はたいてい歩いて通勤する。","tts_text":"usually"},{"id":"w_between_PREP","category":"word","lemma":"between","surface":"between","pos":"PREP","cefr":"A2","ipa":"/bɪˈtwiːn/","syllables":"be-TWEEN","stress_pos":1,"meaning_ja":"〜の間に","tags":[],"example_en":"The shop is between the bank and the cafe.","example_ja":"その店は銀行とカフェの間にある。","tts_text":"between"},{"id":"w_during_PREP","category":"word","lemma":"during","surface":"during","pos":"PREP","cefr":"A2","ipa":"/ˈdʊrɪŋ/","syllables":"DUR-ing","stress_pos":0,"meaning_ja":"〜の間（ずっと）","tags":["time"],"example_en":"Please turn off your phone during the movie.","example_ja":"映画の間は携帯の電源を切ってください。","tts_text":"during"},{"id":"w_without_PREP","category":"word","lemma":"without","surface":"without","pos":"PREP","cefr":"A2","ipa":"/wɪˈðaʊt/","syllables":"with-OUT","stress_pos":1,"meaning_ja":"〜なしで","tags":[],"example_en":"I can't read this without my glasses.","example_ja":"眼鏡なしではこれが読めない。","tts_text":"without"},{"id":"w_through_PREP","category":"word","lemma":"through","surface":"through","pos":"PREP","cefr":"A2","ipa":"/θruː/","syllables":"THROUGH","stress_pos":0,"meaning_ja":"〜を通り抜けて","tags":[],"example_en":"We drove through a long tunnel.","example_ja":"私たちは長いトンネルを通り抜けた。","tts_text":"through"},{"id":"w_although_CONJ","category":"word","lemma":"although","surface":"although","pos":"CONJ","cefr":"B1","ipa":"/ɔːlˈðoʊ/","syllables":"al-THOUGH","stress_pos":1,"meaning_ja":"〜だけれども","tags":[],"example_en":"Although it was raining, we went out.","example_ja":"雨が降っていたけれど、私たちは出かけた。","tts_text":"although"},{"id":"w_because_CONJ","category":"word","lemma":"because","surface":"because","pos":"CONJ","cefr":"A1","ipa":"/bɪˈkɔːz/","syllables":"be-CAUSE","stress_pos":1,"meaning_ja":"〜なので","tags":[],"example_en":"I stayed home because I was tired.","example_ja":"疲れていたので家にいた。","tts_text":"because"},{"id":"w_something_PRON","category":"word","lemma":"something","surface":"something","pos":"PRON","cefr":"A1","ipa":"/ˈsʌmθɪŋ/","syllables":"SOME-thing","stress_pos":0,"meaning_ja":"何か","tags":[],"example_en":"I want to tell you something.","example_ja":"あなたに何か伝えたいことがある。","tts_text":"something"},{"id":"w_everyone_PRON","category":"word","lemma":"everyone","surface":"everyone","pos":"PRON","cefr":"A1","ipa":"/ˈɛvriwʌn/","syllables":"EV-ery-one","stress_pos":0,"meaning_ja":"みんな／全員","tags":[],"example_en":"Everyone enjoyed the party.","example_ja":"みんなパーティーを楽しんだ。","tts_text":"everyone"}]
+</script>
+<script type="application/json" id="idioms-pool">
+[{"id":"i_hit_the_road","category":"idiom","phrase":"hit the road","ipa":"/hɪt ðə roʊd/","cefr":"B1","meaning_ja":"出発する／旅立つ","literal_ja":"（字義: 道を打つ）","tags":["travel","informal"],"example_en":"It's getting late, let's hit the road.","example_ja":"遅くなってきた、そろそろ出発しよう。","tts_text":"hit the road"},{"id":"i_break_the_ice","category":"idiom","phrase":"break the ice","ipa":"/breɪk ðə aɪs/","cefr":"B1","meaning_ja":"場の緊張をほぐす／打ち解けるきっかけを作る","literal_ja":"（字義: 氷を割る）","tags":["business","informal"],"example_en":"He told a joke to break the ice.","example_ja":"彼は場をほぐすために冗談を言った。","tts_text":"break the ice"},{"id":"i_piece_of_cake","category":"idiom","phrase":"a piece of cake","ipa":"/ə piːs əv keɪk/","cefr":"B1","meaning_ja":"とても簡単なこと","literal_ja":"（字義: ひと切れのケーキ）","tags":["informal"],"example_en":"The exam was a piece of cake.","example_ja":"その試験はとても簡単だった。","tts_text":"a piece of cake"},{"id":"i_under_the_weather","category":"idiom","phrase":"under the weather","ipa":"/ˈʌndər ðə ˈwɛðər/","cefr":"B1","meaning_ja":"体調がすぐれない","literal_ja":"（字義: 天気の下に）","tags":["medical","informal"],"example_en":"I'm feeling a bit under the weather today.","example_ja":"今日は少し体調がすぐれない。","tts_text":"under the weather"},{"id":"i_spill_the_beans","category":"idiom","phrase":"spill the beans","ipa":"/spɪl ðə biːnz/","cefr":"B2","meaning_ja":"秘密をうっかり漏らす","literal_ja":"（字義: 豆をこぼす）","tags":["informal"],"example_en":"Don't spill the beans about the surprise party.","example_ja":"サプライズパーティーのことを漏らさないで。","tts_text":"spill the beans"},{"id":"i_cut_to_the_chase","category":"idiom","phrase":"cut to the chase","ipa":"/kʌt tə ðə tʃeɪs/","cefr":"B2","meaning_ja":"本題に入る／要点を話す","literal_ja":"（字義: 追跡シーンに切り替える）","tags":["business","informal"],"example_en":"Let's cut to the chase and talk about the budget.","example_ja":"本題に入って予算の話をしよう。","tts_text":"cut to the chase"},{"id":"i_touch_base","category":"idiom","phrase":"touch base","ipa":"/tʌtʃ beɪs/","cefr":"B2","meaning_ja":"近況を確認し合う／連絡を取る","literal_ja":"（字義: ベースに触れる）","tags":["business","informal"],"example_en":"Let's touch base next week about the project.","example_ja":"来週そのプロジェクトについて連絡を取り合おう。","tts_text":"touch base"},{"id":"i_on_the_same_page","category":"idiom","phrase":"on the same page","ipa":"/ɑːn ðə seɪm peɪdʒ/","cefr":"B1","meaning_ja":"認識が一致している","literal_ja":"（字義: 同じページの上に）","tags":["business"],"example_en":"Let's make sure we're all on the same page.","example_ja":"全員の認識が一致しているか確認しよう。","tts_text":"on the same page"},{"id":"i_over_the_moon","category":"idiom","phrase":"over the moon","ipa":"/ˈoʊvər ðə muːn/","cefr":"B1","meaning_ja":"大喜びして","literal_ja":"（字義: 月を越えて）","tags":["positive","informal"],"example_en":"She was over the moon about the news.","example_ja":"彼女はその知らせに大喜びだった。","tts_text":"over the moon"},{"id":"i_lend_a_hand","category":"idiom","phrase":"lend a hand","ipa":"/lɛnd ə hænd/","cefr":"B1","meaning_ja":"手を貸す／手伝う","literal_ja":"（字義: 手を貸す）","tags":["request"],"example_en":"Could you lend a hand with these boxes?","example_ja":"この箱を運ぶのを手伝ってくれる？","tts_text":"lend a hand"},{"id":"i_make_up_your_mind","category":"idiom","phrase":"make up your mind","ipa":"/meɪk ʌp jər maɪnd/","cefr":"B1","meaning_ja":"決心する／決める","literal_ja":"（字義: 心を作り上げる）","tags":[],"example_en":"You need to make up your mind soon.","example_ja":"そろそろ決めないといけないよ。","tts_text":"make up your mind"},{"id":"i_get_the_hang_of_it","category":"idiom","phrase":"get the hang of it","ipa":"/ɡɛt ðə hæŋ əv ɪt/","cefr":"B2","meaning_ja":"コツをつかむ","literal_ja":"（字義: それの掛け方をつかむ）","tags":["informal"],"example_en":"Don't worry, you'll get the hang of it.","example_ja":"心配しないで、すぐにコツをつかむよ。","tts_text":"get the hang of it"},{"id":"i_call_it_a_day","category":"idiom","phrase":"call it a day","ipa":"/kɔːl ɪt ə deɪ/","cefr":"B1","meaning_ja":"その日の仕事を切り上げる","literal_ja":"（字義: それを一日と呼ぶ）","tags":["business","informal"],"example_en":"We've worked enough; let's call it a day.","example_ja":"十分働いた、今日はこれで終わりにしよう。","tts_text":"call it a day"},{"id":"i_keep_an_eye_on","category":"idiom","phrase":"keep an eye on","ipa":"/kiːp ən aɪ ɑːn/","cefr":"B1","meaning_ja":"〜を見張る／気にかける","literal_ja":"（字義: 目を上に置いておく）","tags":["request"],"example_en":"Can you keep an eye on my bag for a minute?","example_ja":"少しの間カバンを見ていてくれる？","tts_text":"keep an eye on"},{"id":"i_in_the_long_run","category":"idiom","phrase":"in the long run","ipa":"/ɪn ðə lɔːŋ rʌn/","cefr":"B1","meaning_ja":"長い目で見れば","literal_ja":"（字義: 長い走りの中で）","tags":["time"],"example_en":"Saving money now will help in the long run.","example_ja":"今お金を貯めれば長い目で見て役に立つ。","tts_text":"in the long run"},{"id":"i_once_in_a_while","category":"idiom","phrase":"once in a while","ipa":"/wʌns ɪn ə waɪl/","cefr":"A2","meaning_ja":"時々／たまに","literal_ja":"（字義: しばらくに一度）","tags":["time"],"example_en":"We go out for dinner once in a while.","example_ja":"私たちはたまに外食する。","tts_text":"once in a while"},{"id":"i_run_out_of","category":"idiom","phrase":"run out of","ipa":"/rʌn aʊt əv/","cefr":"A2","meaning_ja":"〜を使い切る／切らす","literal_ja":"（字義: 〜から走り出る）","tags":[],"example_en":"We've run out of milk.","example_ja":"牛乳を切らしてしまった。","tts_text":"run out of"},{"id":"i_look_forward_to","category":"idiom","phrase":"look forward to","ipa":"/lʊk ˈfɔːrwərd tə/","cefr":"A2","meaning_ja":"〜を楽しみに待つ","literal_ja":"（字義: 前方を見る）","tags":["positive"],"example_en":"I look forward to seeing you next week.","example_ja":"来週お会いするのを楽しみにしています。","tts_text":"look forward to"},{"id":"i_make_sense","category":"idiom","phrase":"make sense","ipa":"/meɪk sɛns/","cefr":"A2","meaning_ja":"筋が通る／理解できる","literal_ja":"（字義: 意味を作る）","tags":[],"example_en":"Your explanation makes sense now.","example_ja":"あなたの説明で今は納得がいった。","tts_text":"make sense"},{"id":"i_take_care_of","category":"idiom","phrase":"take care of","ipa":"/teɪk kɛr əv/","cefr":"A2","meaning_ja":"〜の世話をする／対処する","literal_ja":"（字義: 〜の注意を取る）","tags":["request"],"example_en":"Can you take care of the kids tonight?","example_ja":"今夜子どもたちの面倒を見てくれる？","tts_text":"take care of"},{"id":"i_give_up","category":"idiom","phrase":"give up","ipa":"/ɡɪv ʌp/","cefr":"A2","meaning_ja":"あきらめる","literal_ja":"（字義: 上に与える）","tags":[],"example_en":"Never give up on your dreams.","example_ja":"夢をあきらめてはいけない。","tts_text":"give up"},{"id":"i_figure_out","category":"idiom","phrase":"figure out","ipa":"/ˈfɪɡjər aʊt/","cefr":"B1","meaning_ja":"理解する／解決策を見つけ出す","literal_ja":"（字義: 外に形作る）","tags":[],"example_en":"I can't figure out how this works.","example_ja":"これがどう動くのか分からない。","tts_text":"figure out"},{"id":"i_come_up_with","category":"idiom","phrase":"come up with","ipa":"/kʌm ʌp wɪð/","cefr":"B1","meaning_ja":"（考えなどを）思いつく","literal_ja":"（字義: 〜とともに上ってくる）","tags":["business"],"example_en":"She came up with a brilliant idea.","example_ja":"彼女は素晴らしいアイデアを思いついた。","tts_text":"come up with"},{"id":"i_a_far_cry_from","category":"idiom","phrase":"a far cry from","ipa":"/ə fɑːr kraɪ frɑːm/","cefr":"B2","meaning_ja":"〜とは大きく異なる／程遠い","literal_ja":"（字義: 〜から遠い叫び）","tags":[],"example_en":"This hotel is a far cry from what we expected.","example_ja":"このホテルは期待していたものとは程遠い。","tts_text":"a far cry from"}]
+</script>
+<script type="application/json" id="phrases-pool">
+[{"id":"p_could_you_tell_me_station","category":"phrase","phrase":"Could you tell me where the station is?","ipa":"/kʊd ju tɛl mi wɛr ðə ˈsteɪʃən ɪz/","cefr":"A2","meaning_ja":"駅はどこか教えてもらえますか？","tags":["travel","question","polite"],"situation":"旅行先で道を尋ねる","variations":["Could you tell me where the bathroom is?","Could you tell me how to get to the hotel?"],"example_en":null,"example_ja":null,"tts_text":"Could you tell me where the station is?"},{"id":"p_how_much_is_this","category":"phrase","phrase":"How much is this?","ipa":"/haʊ mʌtʃ ɪz ðɪs/","cefr":"A1","meaning_ja":"これはいくらですか？","tags":["shopping","question"],"situation":"店で値段を尋ねる","variations":["How much is that one?","How much are these?"],"example_en":null,"example_ja":null,"tts_text":"How much is this?"},{"id":"p_id_like_the_chicken","category":"phrase","phrase":"I'd like the chicken, please.","ipa":"/aɪd laɪk ðə ˈtʃɪkɪn pliːz/","cefr":"A2","meaning_ja":"チキンをお願いします。","tags":["restaurant","request","polite"],"situation":"レストランで注文する","variations":["I'd like the steak, please.","I'd like a coffee, please."],"example_en":null,"example_ja":null,"tts_text":"I'd like the chicken, please."},{"id":"p_could_i_have_the_bill","category":"phrase","phrase":"Could I have the bill, please?","ipa":"/kʊd aɪ hæv ðə bɪl pliːz/","cefr":"A2","meaning_ja":"お会計をお願いできますか？","tags":["restaurant","request","polite"],"situation":"レストランで会計を頼む","variations":["Could I have the check, please?","Could we have the menu, please?"],"example_en":null,"example_ja":null,"tts_text":"Could I have the bill, please?"},{"id":"p_do_you_have_smaller_size","category":"phrase","phrase":"Do you have this in a smaller size?","ipa":"/du ju hæv ðɪs ɪn ə ˈsmɔːlər saɪz/","cefr":"A2","meaning_ja":"これの小さいサイズはありますか？","tags":["shopping","question"],"situation":"店で別サイズを尋ねる","variations":["Do you have this in a larger size?","Do you have this in another color?"],"example_en":null,"example_ja":null,"tts_text":"Do you have this in a smaller size?"},{"id":"p_go_straight_turn_left","category":"phrase","phrase":"Go straight and turn left at the corner.","ipa":"/ɡoʊ streɪt ænd tɜːrn lɛft æt ðə ˈkɔːrnər/","cefr":"A2","meaning_ja":"まっすぐ行って角を左に曲がってください。","tags":["transportation","travel"],"situation":"道案内をする","variations":["Go straight and turn right at the light.","Go down this street and turn left."],"example_en":null,"example_ja":null,"tts_text":"Go straight and turn left at the corner."},{"id":"p_im_calling_about","category":"phrase","phrase":"I'm calling about my reservation.","ipa":"/aɪm ˈkɔːlɪŋ əˈbaʊt maɪ ˌrɛzərˈveɪʃən/","cefr":"B1","meaning_ja":"予約の件でお電話しています。","tags":["business","hotel"],"situation":"電話で用件を伝える","variations":["I'm calling about the job posting.","I'm calling about an order I placed."],"example_en":null,"example_ja":null,"tts_text":"I'm calling about my reservation."},{"id":"p_let_me_get_back_to_you","category":"phrase","phrase":"Let me get back to you on that.","ipa":"/lɛt mi ɡɛt bæk tə ju ɑːn ðæt/","cefr":"B1","meaning_ja":"その件は後ほどお返事します。","tags":["business","polite"],"situation":"即答を避けて後で回答する","variations":["I'll get back to you tomorrow.","Can I get back to you later?"],"example_en":null,"example_ja":null,"tts_text":"Let me get back to you on that."},{"id":"p_how_have_you_been","category":"phrase","phrase":"How have you been?","ipa":"/haʊ hæv ju bɪn/","cefr":"A2","meaning_ja":"最近どうしてた？","tags":["greeting"],"situation":"久しぶりに会った人への挨拶","variations":["How have you been lately?","How's everything been?"],"example_en":null,"example_ja":null,"tts_text":"How have you been?"},{"id":"p_nice_to_meet_you","category":"phrase","phrase":"Nice to meet you.","ipa":"/naɪs tə miːt ju/","cefr":"A1","meaning_ja":"はじめまして。","tags":["greeting","polite"],"situation":"初対面の挨拶","variations":["It's nice to meet you.","Nice to finally meet you."],"example_en":null,"example_ja":null,"tts_text":"Nice to meet you."},{"id":"p_id_like_to_check_in","category":"phrase","phrase":"I'd like to check in, please.","ipa":"/aɪd laɪk tə tʃɛk ɪn pliːz/","cefr":"A2","meaning_ja":"チェックインをお願いします。","tags":["hotel","request","polite"],"situation":"ホテルで手続きをする","variations":["I'd like to check out, please.","I have a reservation under Tanaka."],"example_en":null,"example_ja":null,"tts_text":"I'd like to check in, please."},{"id":"p_could_you_say_that_again","category":"phrase","phrase":"Could you say that again, please?","ipa":"/kʊd ju seɪ ðæt əˈɡɛn pliːz/","cefr":"A2","meaning_ja":"もう一度言ってもらえますか？","tags":["request","polite","question"],"situation":"聞き取れなかったとき","variations":["Could you repeat that, please?","Sorry, could you say that more slowly?"],"example_en":null,"example_ja":null,"tts_text":"Could you say that again, please?"},{"id":"p_i_have_a_headache","category":"phrase","phrase":"I have a headache.","ipa":"/aɪ hæv ə ˈhɛdeɪk/","cefr":"A2","meaning_ja":"頭が痛いです。","tags":["medical"],"situation":"体調不良を伝える","variations":["I have a stomachache.","I have a fever."],"example_en":null,"example_ja":null,"tts_text":"I have a headache."},{"id":"p_where_can_i_catch_a_taxi","category":"phrase","phrase":"Where can I catch a taxi?","ipa":"/wɛr kæn aɪ kætʃ ə ˈtæksi/","cefr":"A2","meaning_ja":"どこでタクシーをつかまえられますか？","tags":["transportation","travel","question"],"situation":"移動手段を尋ねる","variations":["Where can I catch the bus?","Where can I find a taxi stand?"],"example_en":null,"example_ja":null,"tts_text":"Where can I catch a taxi?"},{"id":"p_thatd_be_great","category":"phrase","phrase":"That'd be great, thanks!","ipa":"/ðætd bi ɡreɪt θæŋks/","cefr":"A2","meaning_ja":"それは助かります、ありがとう！","tags":["gratitude","agreement","casual"],"situation":"申し出を快く受ける","variations":["That would be great, thank you.","That sounds great, thanks!"],"example_en":null,"example_ja":null,"tts_text":"That'd be great, thanks!"},{"id":"p_im_not_sure_about_that","category":"phrase","phrase":"I'm not sure about that.","ipa":"/aɪm nɑːt ʃʊr əˈbaʊt ðæt/","cefr":"A2","meaning_ja":"それはどうかな（確信が持てない）。","tags":["disagreement","concern"],"situation":"やんわり同意しかねるとき","variations":["I'm not so sure about that.","I'm not really sure."],"example_en":null,"example_ja":null,"tts_text":"I'm not sure about that."},{"id":"p_i_see_your_point","category":"phrase","phrase":"I see your point.","ipa":"/aɪ siː jər pɔɪnt/","cefr":"B1","meaning_ja":"言いたいことは分かります。","tags":["agreement","business"],"situation":"相手の主張を理解したと示す","variations":["I get your point.","I see what you mean."],"example_en":null,"example_ja":null,"tts_text":"I see your point."},{"id":"p_would_you_mind_helping","category":"phrase","phrase":"Would you mind helping me with this?","ipa":"/wʊd ju maɪnd ˈhɛlpɪŋ mi wɪð ðɪs/","cefr":"B1","meaning_ja":"これを手伝っていただけませんか？","tags":["request","polite"],"situation":"丁寧に手助けを頼む","variations":["Would you mind opening the window?","Would you mind waiting a moment?"],"example_en":null,"example_ja":null,"tts_text":"Would you mind helping me with this?"},{"id":"p_lets_meet_at_seven","category":"phrase","phrase":"Let's meet at seven in front of the station.","ipa":"/lɛts miːt æt ˈsɛvən ɪn frʌnt əv ðə ˈsteɪʃən/","cefr":"A2","meaning_ja":"7時に駅前で会いましょう。","tags":["time","agreement"],"situation":"待ち合わせを決める","variations":["Let's meet at noon at the cafe.","Let's meet in front of the hotel."],"example_en":null,"example_ja":null,"tts_text":"Let's meet at seven in front of the station."},{"id":"p_ill_be_there_at_eight","category":"phrase","phrase":"I'll be there at eight.","ipa":"/aɪl bi ðɛr æt eɪt/","cefr":"A2","meaning_ja":"8時にそこに行きます。","tags":["time","agreement"],"situation":"到着時刻を約束する","variations":["I'll be there in ten minutes.","I'll be there around nine."],"example_en":null,"example_ja":null,"tts_text":"I'll be there at eight."},{"id":"p_i_cant_believe_it","category":"phrase","phrase":"I can't believe it!","ipa":"/aɪ kænt bɪˈliːv ɪt/","cefr":"A2","meaning_ja":"信じられない！","tags":["surprise","excitement"],"situation":"驚きを表す","variations":["I can't believe this!","I just can't believe it."],"example_en":null,"example_ja":null,"tts_text":"I can't believe it!"},{"id":"p_thats_amazing","category":"phrase","phrase":"That's amazing!","ipa":"/ðæts əˈmeɪzɪŋ/","cefr":"A1","meaning_ja":"すごい！／素晴らしい！","tags":["positive","excitement"],"situation":"感心・称賛を表す","variations":["That's awesome!","That's wonderful!"],"example_en":null,"example_ja":null,"tts_text":"That's amazing!"},{"id":"p_no_way","category":"phrase","phrase":"No way!","ipa":"/noʊ weɪ/","cefr":"A2","meaning_ja":"まさか！／ありえない！","tags":["surprise","disagreement","informal"],"situation":"強い驚きや拒否を表す","variations":["No way, really?","There's no way!"],"example_en":null,"example_ja":null,"tts_text":"No way!"},{"id":"p_can_you_help_me_find","category":"phrase","phrase":"Can you help me find this address?","ipa":"/kæn ju hɛlp mi faɪnd ðɪs əˈdrɛs/","cefr":"A2","meaning_ja":"この住所を探すのを手伝ってもらえますか？","tags":["travel","request","question"],"situation":"道に迷って助けを求める","variations":["Can you help me find platform 3?","Can you help me find this store?"],"example_en":null,"example_ja":null,"tts_text":"Can you help me find this address?"}]
+</script>
+
+<script>
+'use strict';
+
+// ============================================================
+// データロード
+// ============================================================
+const WORDS_POOL   = JSON.parse(document.getElementById('words-pool').textContent);
+const IDIOMS_POOL  = JSON.parse(document.getElementById('idioms-pool').textContent);
+const PHRASES_POOL = JSON.parse(document.getElementById('phrases-pool').textContent);
+WORDS_POOL.forEach(x => x.category = 'word');
+IDIOMS_POOL.forEach(x => x.category = 'idiom');
+PHRASES_POOL.forEach(x => x.category = 'phrase');
+
+const POS_LABELS = { NOUN: '名詞', VERB: '動詞', ADJ: '形容詞', ADV: '副詞', PREP: '前置詞', CONJ: '接続詞', PRON: '代名詞' };
+
+function basePool(cat) {
+  if (cat === 'word')   return WORDS_POOL.filter(x => x.meaning_ja);
+  if (cat === 'idiom')  return IDIOMS_POOL.filter(x => x.meaning_ja);
+  if (cat === 'phrase') return PHRASES_POOL.filter(x => x.meaning_ja);
+  return [];
+}
+
+// フィルタ適用後のプール
+function getPool(cat) {
+  let pool = basePool(cat);
+  const f = state.filters;
+  if (f.cefr.size > 0) pool = pool.filter(x => f.cefr.has(x.cefr));
+  if (f.tags.size > 0) pool = pool.filter(x => (x.tags || []).some(t => f.tags.has(t)));
+  return pool;
+}
+
+function getSurface(item) {
+  if (item.category === 'word') return item.surface || item.lemma;
+  return item.phrase;
+}
+function getTtsText(item) { return item.tts_text || getSurface(item); }
+function getItemKey(item) {
+  if (item.category === 'word') return item.lemma + '|' + item.pos;
+  return item.phrase;
+}
+function wordCountOf(item) {
+  return getSurface(item).trim().split(/\s+/).length;
+}
+
+// ============================================================
+// 設定 (localStorage)
+// ============================================================
+const SETTINGS_KEY = 'english.quiz.settings.v1';
+function defaultSettings() {
+  return { showIpa: true, showSyllables: true, defaultRate: 0.9, voiceName: null, sound: true };
+}
+function loadSettings() {
+  const raw = localStorage.getItem(SETTINGS_KEY);
+  if (raw) { try { return Object.assign(defaultSettings(), JSON.parse(raw)); } catch (e) {} }
+  return defaultSettings();
+}
+function saveSettings(s) { localStorage.setItem(SETTINGS_KEY, JSON.stringify(s)); }
+let settings = loadSettings();
+
+// ============================================================
+// 進捗管理 (localStorage) + SRS
+// ============================================================
+const STORAGE_KEY = 'english.quiz.progress.v1';
+
+function defaultProgress() {
+  return { version: 1, sessions: 0, totalAnswered: 0, totalCorrect: 0, srs: {}, history: [] };
+}
+function loadProgress() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (raw) { try { return Object.assign(defaultProgress(), JSON.parse(raw)); } catch (e) {} }
+  return defaultProgress();
+}
+function saveProgress(p) { localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); }
+
+function today() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function dateAfter(days) {
+  const d = new Date(); d.setDate(d.getDate() + days);
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function getSrs(progress, itemId, mode) { return progress.srs[`${itemId}::${mode}`] || null; }
+function newSrsState() {
+  return { ef: 2.5, interval_days: 0, repetitions: 0, due_date: null, last_review: null, lapses: 0 };
+}
+// SM-2 (失敗時は同日再出題). 4択: 正解=4 / 不正解=2
+function sm2Update(srs, quality) {
+  const s = Object.assign({}, srs);
+  if (quality < 3) {
+    s.repetitions = 0; s.interval_days = 0; s.lapses = (s.lapses || 0) + 1;
+  } else {
+    if (s.repetitions === 0) s.interval_days = 1;
+    else if (s.repetitions === 1) s.interval_days = 6;
+    else s.interval_days = Math.max(1, Math.round(s.interval_days * s.ef));
+    s.repetitions++;
+  }
+  s.ef = s.ef + (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02));
+  if (s.ef < 1.3) s.ef = 1.3;
+  s.last_review = today();
+  s.due_date = s.interval_days === 0 ? today() : dateAfter(s.interval_days);
+  return s;
+}
+function isMastered(srs) { return srs && srs.repetitions >= 5 && srs.ef >= 2.5; }
+
+// ============================================================
+// TTS (Web Speech API)
+// ============================================================
+function pickVoice() {
+  const voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
+  if (settings.voiceName) {
+    const v = voices.find(v => v.name === settings.voiceName);
+    if (v) return v;
+  }
+  return voices.find(v => v.lang.startsWith('en') && /female|samantha|aria|jenny|zira/i.test(v.name))
+      || voices.find(v => v.lang.startsWith('en-US'))
+      || voices.find(v => v.lang.startsWith('en'))
+      || null;
+}
+// rates 配列の各速度で順に読み上げる (キュー)
+function speakSeq(text, rates) {
+  if (!window.speechSynthesis) { alert('お使いのブラウザは音声合成に対応していません'); return; }
+  window.speechSynthesis.cancel();
+  const voice = pickVoice();
+  rates.forEach(r => {
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'en-US'; u.rate = r;
+    if (voice) u.voice = voice;
+    window.speechSynthesis.speak(u);
+  });
+}
+function speak(text, rate) { speakSeq(text, [rate != null ? rate : settings.defaultRate]); }
+function speakSlow(text) { speakSeq(text, [0.65]); }
+function speakRepeat(text, rate) { const r = rate != null ? rate : settings.defaultRate; speakSeq(text, [r, r, r]); }
+function speakLadder(text) { speakSeq(text, [0.6, settings.defaultRate]); }
+
+// ============================================================
+// 出題ロジック (SRS対応)
+// ============================================================
+function pickRandomItems(pool, n) {
+  return [...pool].sort(() => Math.random() - 0.5).slice(0, n);
+}
+function weightedSample(items, n, weightFn) {
+  const scored = items.map(x => ({ x, key: -Math.pow(Math.random(), 1 / Math.max(0.01, weightFn(x))) }));
+  scored.sort((a, b) => a.key - b.key);
+  return scored.slice(0, n).map(s => s.x);
+}
+
+function selectItemsForSession(pool, mode, n = 10) {
+  const progress = loadProgress();
+  const t = today();
+  const enriched = pool.map(item => ({ item, srs: getSrs(progress, item.id, mode) || newSrsState() }));
+  const due    = enriched.filter(x => x.srs.last_review && x.srs.due_date && x.srs.due_date <= t);
+  const fresh  = enriched.filter(x => !x.srs.last_review);
+  const future = enriched.filter(x => x.srs.last_review && x.srs.due_date && x.srs.due_date > t);
+
+  const dueCount = Math.min(due.length, Math.max(0, n - 3));
+  const newCount = Math.min(fresh.length, n - dueCount);
+  const shuffledDue = weightedSample(due, dueCount, x => 1 + (x.srs.lapses || 0) * 0.5);
+
+  const cefrWeight = { A1: 1.15, A2: 1.05, B1: 1.0, B2: 0.9 };
+  const sampledNew = weightedSample(fresh, newCount, x => cefrWeight[x.item.cefr] || 1.0);
+
+  let selected = [...shuffledDue, ...sampledNew];
+  if (selected.length < n) {
+    selected = selected.concat(
+      [...future].sort(() => Math.random() - 0.5).slice(0, n - selected.length));
+  }
+  selected.sort(() => Math.random() - 0.5);
+  return selected.map(x => x.item);
+}
+
+// 音的類似度スコア
+function phoneticScore(a, b) {
+  if (!a || !b || a === b) return -Infinity;
+  a = String(a).toLowerCase(); b = String(b).toLowerCase();
+  let score = 0;
+  if (a[0] === b[0]) score += 3;
+  if (a[a.length-1] === b[b.length-1]) score += 1;
+  score -= Math.abs(a.length - b.length) * 0.4;
+  const bigramsA = new Set();
+  for (let i = 0; i < a.length - 1; i++) bigramsA.add(a.substring(i, i + 2));
+  for (let i = 0; i < b.length - 1; i++) if (bigramsA.has(b.substring(i, i + 2))) score += 1;
+  const vA = a.replace(/[^aeiou]/g, ''), vB = b.replace(/[^aeiou]/g, '');
+  if (vA && vA === vB) score += 2;
+  return score;
+}
+// 文字列bigram類似 (慣用句用)
+function bigramOverlap(a, b) {
+  a = String(a).toLowerCase().replace(/\s+/g, ' ');
+  b = String(b).toLowerCase().replace(/\s+/g, ' ');
+  const setA = new Set();
+  for (let i = 0; i < a.length - 1; i++) setA.add(a.substring(i, i + 2));
+  let shared = 0;
+  for (let i = 0; i < b.length - 1; i++) if (setA.has(b.substring(i, i + 2))) shared++;
+  return shared;
+}
+function wordSet(s) { return new Set((s || '').toLowerCase().match(/[a-z']+/g) || []); }
+
+function pickDistractors(target, pool, n = 3) {
+  const cat = target.category;
+  let candidates;
+  if (cat === 'word') {
+    candidates = pool.filter(x => x.pos === target.pos && x.lemma !== target.lemma
+      && x.meaning_ja && x.meaning_ja !== target.meaning_ja);
+    if (candidates.length < n + 2) {
+      candidates = pool.filter(x => x.lemma !== target.lemma
+        && x.meaning_ja && x.meaning_ja !== target.meaning_ja);
+    }
+  } else if (cat === 'idiom') {
+    const tc = wordCountOf(target);
+    candidates = pool.filter(x => Math.abs(wordCountOf(x) - tc) <= 1 && x.phrase !== target.phrase
+      && x.meaning_ja && x.meaning_ja !== target.meaning_ja);
+    if (candidates.length < n + 2) {
+      candidates = pool.filter(x => x.phrase !== target.phrase
+        && x.meaning_ja && x.meaning_ja !== target.meaning_ja);
+    }
+  } else { // phrase: 似た状況タグ + 単語オーバーラップ
+    const tags = new Set(target.tags || []);
+    candidates = pool.filter(x => x.phrase !== target.phrase
+      && x.meaning_ja && x.meaning_ja !== target.meaning_ja
+      && (x.tags || []).some(t => tags.has(t)));
+    if (candidates.length < n + 2) {
+      candidates = pool.filter(x => x.phrase !== target.phrase
+        && x.meaning_ja && x.meaning_ja !== target.meaning_ja);
+    }
+  }
+  if (candidates.length <= n) return candidates;
+
+  let scored;
+  if (cat === 'word') {
+    const ts = getSurface(target);
+    scored = candidates.map(c => ({ item: c, score: phoneticScore(ts, getSurface(c)) }));
+  } else if (cat === 'idiom') {
+    scored = candidates.map(c => ({ item: c, score: bigramOverlap(getSurface(target), getSurface(c)) }));
+  } else {
+    const tw = wordSet(getSurface(target));
+    scored = candidates.map(c => {
+      let shared = 0;
+      for (const w of wordSet(getSurface(c))) if (tw.has(w)) shared++;
+      return { item: c, score: shared };
+    });
+  }
+  scored.sort((a, b) => b.score - a.score);
+  const K = Math.min(scored.length, Math.max(n * 4, 12));
+  return pickRandomItems(scored.slice(0, K).map(s => s.item), n);
+}
+
+function makeQuestion(target, pool, mode) {
+  const distractors = pickDistractors(target, pool, 3);
+  const allChoices = [target, ...distractors].sort(() => Math.random() - 0.5);
+  return { target, mode, choices: allChoices, correctIndex: allChoices.indexOf(target) };
+}
+
+// ============================================================
+// モード定義
+// ============================================================
+const MODES = {
+  'word_audio_to_meaning':   { cat: 'word', icon: '🔊', title: '音声 → 意味', desc: 'TTSで単語を聴き、日本語意味を4択', choicesAs: 'meaning', useAudio: true },
+  'word_audio_to_word':      { cat: 'word', icon: '🎧', title: '音声 → スペル', desc: 'TTSで単語を聴き、英単語のつづりを4択', choicesAs: 'surface', useAudio: true },
+  'word_text_to_meaning':    { cat: 'word', icon: '👁', title: '単語 → 意味', desc: '単語表記を見て、日本語意味を4択', choicesAs: 'meaning', useAudio: false },
+  'idiom_audio_to_meaning':  { cat: 'idiom', icon: '🔊', title: '音声 → 意味', desc: 'TTSで慣用句を聴き、日本語意味を4択', choicesAs: 'meaning', useAudio: true },
+  'idiom_audio_to_word':     { cat: 'idiom', icon: '🎧', title: '音声 → 表記', desc: 'TTSで慣用句を聴き、英語表記を4択', choicesAs: 'surface', useAudio: true },
+  'idiom_text_to_meaning':   { cat: 'idiom', icon: '👁', title: '慣用句 → 意味', desc: '慣用句を見て、日本語意味を4択', choicesAs: 'meaning', useAudio: false },
+  'phrase_audio_to_meaning': { cat: 'phrase', icon: '🔊', title: '音声 → 意味', desc: 'TTSでフレーズを聴き、日本語意味を4択', choicesAs: 'meaning', useAudio: true },
+  'phrase_audio_to_word':    { cat: 'phrase', icon: '🎧', title: '音声 → 表記', desc: 'TTSでフレーズを聴き、英語表記を4択', choicesAs: 'surface', useAudio: true },
+  'phrase_text_to_meaning':  { cat: 'phrase', icon: '👁', title: 'フレーズ → 意味', desc: 'フレーズを見て、日本語意味を4択', choicesAs: 'meaning', useAudio: false },
+};
+const CAT_LABELS = { word: '単語', idiom: '慣用句', phrase: 'フレーズ' };
+
+// 場面/機能/感情/スタイル/トピック タグの日本語ラベル
+const TAG_LABELS = {
+  travel:'旅行', restaurant:'レストラン', shopping:'買い物', business:'ビジネス', school:'学校',
+  home:'家庭', medical:'医療', transportation:'交通', hotel:'ホテル',
+  greeting:'挨拶', question:'質問', request:'依頼', apology:'謝罪', gratitude:'感謝',
+  agreement:'同意', disagreement:'反対', goodbye:'別れ',
+  positive:'肯定', negative:'否定', surprise:'驚き', concern:'心配', confusion:'困惑', excitement:'興奮',
+  formal:'フォーマル', informal:'カジュアル', slang:'スラング', polite:'丁寧', casual:'くだけた',
+  food:'食べ物', body:'身体', family:'家族', time:'時間', nature:'自然', weather:'天気',
+  clothes:'衣服', color:'色', number:'数', animal:'動物', emotion:'感情',
+};
+function tagLabel(t) { return TAG_LABELS[t] || t; }
+
+// ============================================================
+// 状態
+// ============================================================
+let state = {
+  view: 'home',
+  category: 'word',
+  mode: null,
+  questions: [],
+  currentIdx: 0,
+  sessionScore: 0,
+  sessionAnswers: [],
+  selectedChoice: null,
+  currentRate: settings.defaultRate,
+  showFilter: false,
+  filters: { cefr: new Set(), tags: new Set() },
+};
+
+const app = document.getElementById('app');
+
+function render() {
+  app.innerHTML = '';
+  if (state.view === 'home') renderHome();
+  else if (state.view === 'quiz') renderQuiz();
+  else if (state.view === 'result') renderResult();
+  else if (state.view === 'dashboard') renderDashboard();
+  else if (state.view === 'settings') renderSettings();
+}
+
+function computeSrsSummary(pool, mode) {
+  const progress = loadProgress();
+  const t = today();
+  let due = 0, mastered = 0, fresh = 0, learning = 0;
+  for (const item of pool) {
+    const srs = getSrs(progress, item.id, mode);
+    if (!srs || !srs.last_review) { fresh++; continue; }
+    if (isMastered(srs)) mastered++; else learning++;
+    if (srs.due_date && srs.due_date <= t) due++;
+  }
+  return { due, mastered, fresh, learning };
+}
+
+// ============================================================
+// ホーム画面
+// ============================================================
+function renderHome() {
+  const progress = loadProgress();
+  const accuracy = progress.totalAnswered > 0 ? Math.round((progress.totalCorrect / progress.totalAnswered) * 100) : 0;
+  const cat = state.category;
+  const pool = getPool(cat);
+  const baseCount = basePool(cat).length;
+  const modesForCat = Object.entries(MODES).filter(([_, m]) => m.cat === cat);
+
+  function badgeBlock(modeName) {
+    const s = computeSrsSummary(pool, modeName);
+    return `<span class="srs-badge">
+      ${s.due > 0 ? `<span class="badge badge-due">復習 ${s.due}</span>` : ''}
+      <span class="badge badge-fresh">新規 ${s.fresh}</span>
+      <span class="badge badge-mastered">習得 ${s.mastered}</span>
+    </span>`;
+  }
+  const modeButtons = modesForCat.map(([name, m]) => `
+    <button class="mode-btn" data-mode="${name}">
+      <span class="mode-title">${m.icon} ${m.title}</span>
+      <span class="mode-desc">${m.desc}</span>
+      ${badgeBlock(name)}
+    </button>`).join('');
+
+  const categoryTabs = ['word','idiom','phrase'].map(c =>
+    `<button class="category-tab ${c===cat?'active':''}" data-cat="${c}">${CAT_LABELS[c]}</button>`).join('');
+
+  app.innerHTML = `
+    <h1>英会話 Quiz</h1>
+    <p class="subtitle">音と意味とスペルの3軸で鍛えるリスニング学習 / 1セッション=10問</p>
+    <div class="category-tabs">${categoryTabs}</div>
+    ${renderFilterPanel(cat, pool.length, baseCount)}
+    <div class="card">
+      <h3 style="margin-bottom:12px; color:var(--accent);">モードを選択</h3>
+      ${pool.length === 0
+        ? '<p class="small-text">この絞り込み条件に該当する項目がありません。フィルタを調整してください。</p>'
+        : modeButtons}
+    </div>
+    <div class="stats">
+      <div class="stat-item"><div class="stat-value">${progress.sessions}</div><div class="stat-label">セッション</div></div>
+      <div class="stat-item"><div class="stat-value">${progress.totalAnswered}</div><div class="stat-label">解答数</div></div>
+      <div class="stat-item"><div class="stat-value">${accuracy}%</div><div class="stat-label">正答率</div></div>
+    </div>
+    <div style="margin-top:14px; display:flex; gap:8px; flex-wrap:wrap;">
+      <button class="next-btn home-nav" id="dashboard-btn" style="background:var(--panel2); color:var(--text); flex:1;">📊 ダッシュボード</button>
+      <button class="next-btn home-nav" id="settings-btn" style="background:var(--panel2); color:var(--text); flex:1;">⚙️ 設定</button>
+    </div>
+    <p class="small-text center" style="margin-top:14px;">SM-2 間隔反復 / 不正解は同日再出題</p>
+  `;
+
+  app.querySelectorAll('.category-tab').forEach(btn =>
+    btn.addEventListener('click', () => { state.category = btn.dataset.cat; render(); }));
+  app.querySelectorAll('.mode-btn').forEach(btn =>
+    btn.addEventListener('click', () => startQuiz(btn.dataset.mode)));
+  document.getElementById('dashboard-btn').addEventListener('click', () => { state.view = 'dashboard'; render(); });
+  document.getElementById('settings-btn').addEventListener('click', () => { state.view = 'settings'; render(); });
+  bindFilterEvents(cat);
+}
+
+function renderFilterPanel(cat, filteredCount, baseCount) {
+  const pool = basePool(cat);
+  const cefrLevels = ['A1','A2','B1','B2'];
+  const tagsPresent = [...new Set(pool.flatMap(x => x.tags || []))].sort();
+  const f = state.filters;
+  const activeCount = f.cefr.size + f.tags.size;
+
+  const summaryParts = [];
+  if (f.cefr.size) summaryParts.push([...f.cefr].join('+'));
+  if (f.tags.size) summaryParts.push([...f.tags].map(tagLabel).join('+'));
+  const summaryText = activeCount === 0
+    ? `絞り込みなし / 全${baseCount}件`
+    : `絞り込み中: ${summaryParts.join(' / ')} → ${filteredCount}件`;
+
+  if (!state.showFilter) {
+    return `<div class="card" style="padding:12px 18px;">
+      <div class="filter-summary" id="filter-toggle">
+        <span>🔎 ${summaryText}</span><span>${activeCount>0?'▼ 編集':'▶ フィルタ'}</span>
+      </div></div>`;
+  }
+  const cefrChips = cefrLevels.map(l =>
+    `<span class="chip ${f.cefr.has(l)?'on':''}" data-cefr="${l}">${l}</span>`).join('');
+  const tagChips = tagsPresent.map(t =>
+    `<span class="chip ${f.tags.has(t)?'on':''}" data-tag="${t}">${tagLabel(t)}</span>`).join('');
+  return `<div class="card">
+    <div class="filter-summary" id="filter-toggle"><span>🔎 ${summaryText}</span><span>▲ 閉じる</span></div>
+    <div class="filter-group-label">CEFRレベル</div><div>${cefrChips}</div>
+    <div class="filter-group-label">タグ</div><div>${tagChips || '<span class="small-text">タグなし</span>'}</div>
+    ${activeCount>0?'<div style="margin-top:10px;"><span class="chip" id="filter-clear">✕ すべて解除</span></div>':''}
+  </div>`;
+}
+
+function bindFilterEvents(cat) {
+  const toggle = document.getElementById('filter-toggle');
+  if (toggle) toggle.addEventListener('click', () => { state.showFilter = !state.showFilter; render(); });
+  app.querySelectorAll('[data-cefr]').forEach(chip => chip.addEventListener('click', () => {
+    const v = chip.dataset.cefr;
+    state.filters.cefr.has(v) ? state.filters.cefr.delete(v) : state.filters.cefr.add(v);
+    render();
+  }));
+  app.querySelectorAll('[data-tag]').forEach(chip => chip.addEventListener('click', () => {
+    const v = chip.dataset.tag;
+    state.filters.tags.has(v) ? state.filters.tags.delete(v) : state.filters.tags.add(v);
+    render();
+  }));
+  const clear = document.getElementById('filter-clear');
+  if (clear) clear.addEventListener('click', () => { state.filters.cefr.clear(); state.filters.tags.clear(); render(); });
+}
+
+// ============================================================
+// クイズ
+// ============================================================
+function isAudioMode(mode) { const m = MODES[mode]; return m && m.useAudio; }
+
+function startQuiz(mode) {
+  const modeDef = MODES[mode];
+  if (!modeDef) { alert('不明なモード: ' + mode); return; }
+  const pool = getPool(modeDef.cat);
+  const items = selectItemsForSession(pool, mode, 10);
+  if (items.length === 0) { alert('出題できる問題がありません'); return; }
+  state.questions = items.map(t => makeQuestion(t, pool, mode));
+  state.currentIdx = 0; state.sessionScore = 0; state.sessionAnswers = [];
+  state.selectedChoice = null; state.view = 'quiz'; state.mode = mode;
+  state.category = modeDef.cat; state.currentRate = settings.defaultRate;
+  render();
+  if (isAudioMode(mode)) setTimeout(() => speak(getTtsText(state.questions[0].target), state.currentRate), 300);
+}
+
+// 発音情報ブロック (IPA + 音節)
+function pronInfo(target) {
+  let html = '';
+  if (settings.showIpa && target.ipa) html += `<div class="pron-line">${escapeHtml(target.ipa)}</div>`;
+  if (settings.showSyllables && target.syllables) html += `<div class="syll-line">🎵 ${escapeHtml(target.syllables)}</div>`;
+  return html;
+}
+
+// 発音コントロール (再生ボタン群 + トグル)
+function pronControls(forAudio) {
+  const playLabel = forAudio ? '🔊 再生' : '🔊 発音を聴く';
+  const cls = forAudio ? 'play-btn' : 'play-btn small';
+  return `
+    <div class="pron-controls">
+      <button class="${cls}" id="play-tts">${playLabel}</button>
+      <button class="play-btn small ghost" id="play-slow">🐢 ゆっくり</button>
+      <button class="play-btn small ghost" id="play-repeat">🔁 3回</button>
+      <button class="play-btn small ghost" id="play-ladder">🪜 ゆっくり→普通</button>
+    </div>
+    <div class="toggle-row">
+      <button class="play-btn small ghost ${settings.showIpa?'on':''}" id="toggle-ipa">📖 IPA</button>
+      <button class="play-btn small ghost ${settings.showSyllables?'on':''}" id="toggle-syll">🎵 音節</button>
+      <select class="speed-select" id="speed-select">
+        <option value="0.7" ${state.currentRate==0.7?'selected':''}>ゆっくり 0.7x</option>
+        <option value="0.9" ${state.currentRate==0.9?'selected':''}>標準 0.9x</option>
+        <option value="1.1" ${state.currentRate==1.1?'selected':''}>速め 1.1x</option>
+      </select>
+    </div>`;
+}
+
+function renderQuiz() {
+  const q = state.questions[state.currentIdx];
+  const target = q.target;
+  const progress = (state.currentIdx / state.questions.length) * 100;
+  const mode = state.mode, modeDef = MODES[mode], cat = modeDef.cat;
+  const isAudio = modeDef.useAudio;
+  const choicesAsSurface = modeDef.choicesAs === 'surface';
+
+  const promptByCat = {
+    word:   isAudio ? (choicesAsSurface ? 'いま聞こえた単語のつづりは？' : 'いま聞こえた単語の意味は？') : 'この単語の意味は？',
+    idiom:  isAudio ? (choicesAsSurface ? 'いま聞こえた慣用句の英語表記は？' : 'いま聞こえた慣用句の意味は？') : 'この慣用句の意味は？',
+    phrase: isAudio ? (choicesAsSurface ? 'いま聞こえたフレーズの英語表記は？' : 'いま聞こえたフレーズの意味は？') : 'このフレーズの意味は？',
+  };
+  const promptText = promptByCat[cat];
+
+  let mainContent;
+  if (isAudio) {
+    mainContent = `<p style="color:var(--muted); margin-bottom:8px;">${promptText}</p>${pronControls(true)}`;
+  } else {
+    const surface = getSurface(target);
+    let displayClass = 'word-display', metaLine = '';
+    if (cat === 'word') {
+      displayClass = 'word-display';
+      metaLine = `<div class="word-meta">${POS_LABELS[target.pos] || target.pos || ''} / CEFR ${target.cefr || '?'}</div>`;
+    } else if (cat === 'idiom') {
+      displayClass = 'phrase-display';
+      metaLine = `<div class="word-meta">慣用句 / CEFR ${target.cefr || '?'}</div>`;
+    } else {
+      displayClass = 'phrase-display';
+      metaLine = target.situation ? `<div class="word-meta">状況: ${escapeHtml(target.situation)}</div>` : '';
+    }
+    mainContent = `
+      <p style="color:var(--muted); margin-bottom:8px;">${promptText}</p>
+      <div class="${displayClass}">${escapeHtml(surface)}</div>
+      ${pronInfo(target)}
+      ${metaLine}
+      ${pronControls(false)}`;
+  }
+
+  const choicesHtml = q.choices.map((c, i) => {
+    const key = ['A','B','C','D'][i];
+    const displayText = choicesAsSurface ? getSurface(c) : (stripEnglishHints(c.meaning_ja) || '(意味未登録)');
+    return `<button class="choice" data-idx="${i}"><span class="choice-key">${key}</span>${escapeHtml(displayText)}</button>`;
+  }).join('');
+
+  // フレーズ(長文)や英語表記選択肢は縦並び
+  const longChoices = cat === 'phrase' || (choicesAsSurface && cat !== 'word');
+  const choicesClass = longChoices ? 'choices choices-stacked' : 'choices';
+
+  app.innerHTML = `
+    <div class="progress-bar"><div class="progress-fill" style="width:${progress}%"></div></div>
+    <div class="question-header">
+      <span>${CAT_LABELS[cat]} ${modeDef.icon} | 問題 ${state.currentIdx + 1} / ${state.questions.length}</span>
+      <span>正解 ${state.sessionScore}</span>
+    </div>
+    <div class="card">
+      <div class="question-main">${mainContent}</div>
+      <div class="${choicesClass}">${choicesHtml}</div>
+      <div id="feedback-area"></div>
+    </div>`;
+
+  bindPronEvents(target);
+  app.querySelectorAll('.choice').forEach(btn =>
+    btn.addEventListener('click', () => handleAnswer(parseInt(btn.dataset.idx))));
+}
+
+function bindPronEvents(target) {
+  const txt = getTtsText(target);
+  const on = (id, fn) => { const el = document.getElementById(id); if (el) el.addEventListener('click', fn); };
+  on('play-tts', () => speak(txt, state.currentRate));
+  on('play-slow', () => speakSlow(txt));
+  on('play-repeat', () => speakRepeat(txt, state.currentRate));
+  on('play-ladder', () => speakLadder(txt));
+  on('toggle-ipa', () => { settings.showIpa = !settings.showIpa; saveSettings(settings); render(); });
+  on('toggle-syll', () => { settings.showSyllables = !settings.showSyllables; saveSettings(settings); render(); });
+  const sel = document.getElementById('speed-select');
+  if (sel) sel.addEventListener('change', e => { state.currentRate = parseFloat(e.target.value); });
+}
+
+function handleAnswer(idx) {
+  if (state.selectedChoice !== null) return;
+  state.selectedChoice = idx;
+  const q = state.questions[state.currentIdx];
+  const target = q.target;
+  const correct = (idx === q.correctIndex);
+  if (correct) state.sessionScore++;
+  state.sessionAnswers.push({ itemId: target.id, correct });
+
+  app.querySelectorAll('.choice').forEach((c, i) => {
+    c.classList.add('disabled');
+    if (i === q.correctIndex) c.classList.add('correct');
+    else if (i === idx && !correct) c.classList.add('wrong');
+  });
+
+  const fb = document.getElementById('feedback-area');
+  const symbol = correct ? '✓ 正解!' : '✗ 不正解';
+  const klass = correct ? 'correct' : 'wrong';
+  const surface = getSurface(target);
+  let detail = `<div><strong>${symbol}</strong> ${escapeHtml(surface)} = ${escapeHtml(target.meaning_ja)}</div>`;
+  if (target.literal_ja) detail += `<div class="small-text" style="margin-top:4px;">${escapeHtml(target.literal_ja)}</div>`;
+  let extra = '';
+  if (target.example_en) {
+    extra = `<div class="example">例: "${escapeHtml(target.example_en)}"`;
+    if (target.example_ja) extra += `<br><span class="example-ja">${escapeHtml(target.example_ja)}</span>`;
+    extra += `</div>`;
+  } else if (target.situation) {
+    extra = `<div class="example">状況: ${escapeHtml(target.situation)}</div>`;
+  }
+  const pron = pronInfo(target);
+
+  fb.innerHTML = `
+    <div class="feedback ${klass}">${detail}${pron}${extra}</div>
+    <button class="next-btn" id="next-btn">${state.currentIdx + 1 < state.questions.length ? '次の問題 →' : '結果を見る'}</button>`;
+  document.getElementById('next-btn').addEventListener('click', nextQuestion);
+}
+
+function nextQuestion() {
+  state.currentIdx++;
+  state.selectedChoice = null;
+  if (state.currentIdx >= state.questions.length) { finishSession(); return; }
+  render();
+  if (isAudioMode(state.mode)) setTimeout(() => speak(getTtsText(state.questions[state.currentIdx].target), state.currentRate), 300);
+}
+
+function finishSession() {
+  const p = loadProgress();
+  p.sessions++;
+  p.totalAnswered += state.sessionAnswers.length;
+  p.totalCorrect += state.sessionScore;
+  state.sessionAnswers.forEach(a => {
+    const key = `${a.itemId}::${state.mode}`;
+    p.srs[key] = sm2Update(p.srs[key] || newSrsState(), a.correct ? 4 : 2);
+  });
+  p.history.unshift({ date: today(), mode: state.mode, score: state.sessionScore, total: state.sessionAnswers.length });
+  p.history = p.history.slice(0, 30);
+  saveProgress(p);
+  state.view = 'result';
+  render();
+}
+
+function renderResult() {
+  const score = state.sessionScore, total = state.questions.length;
+  const pct = Math.round((score / total) * 100);
+  let msg = pct === 100 ? '🎉 完璧！' : pct >= 80 ? '素晴らしい!' : pct >= 60 ? 'よくできました'
+          : pct >= 40 ? '練習を続けよう' : '何度でも挑戦できます';
+  const progress = loadProgress();
+  const itemRows = state.sessionAnswers.map((a, i) => {
+    const target = state.questions[i].target;
+    const srs = getSrs(progress, target.id, state.mode);
+    const nextDate = srs ? srs.due_date : '';
+    const interval = srs ? srs.interval_days : 0;
+    const icon = a.correct ? '<span style="color:var(--good);">✓</span>' : '<span style="color:var(--bad);">✗</span>';
+    const masterIcon = srs && isMastered(srs) ? ' 🏆' : '';
+    return `<div style="padding:10px; background:var(--panel2); border-radius:8px; margin-bottom:6px; display:flex; justify-content:space-between; gap:8px; align-items:center;">
+      <div style="flex:1; min-width:0;">${icon} <strong>${escapeHtml(getSurface(target))}</strong>${masterIcon}
+        <span style="color:var(--muted); margin-left:8px; font-size:0.9em;">= ${escapeHtml(target.meaning_ja)}</span></div>
+      <div class="small-text" style="white-space:nowrap;">${interval}日後<br>${nextDate}</div></div>`;
+  }).join('');
+
+  app.innerHTML = `
+    <h1>セッション完了</h1>
+    <div class="card">
+      <div class="result-score">${score}/${total}</div>
+      <p class="result-message">${msg} (${pct}%)</p>
+      <p class="small-text center" style="margin-bottom:16px;">正解 → 次の復習が先に延長 / 不正解 → 翌日に再出題</p>
+      ${itemRows}
+      <button class="next-btn" id="restart-btn" style="margin-top:20px;">もう一度 (新セット)</button>
+      <button class="next-btn" id="home-btn" style="margin-top:8px; background:var(--panel2); color:var(--text);">ホームへ</button>
+    </div>`;
+  document.getElementById('restart-btn').addEventListener('click', () => startQuiz(state.mode));
+  document.getElementById('home-btn').addEventListener('click', () => { state.view = 'home'; render(); });
+}
+
+// ============================================================
+// ダッシュボード
+// ============================================================
+function renderModeProgress(s, total) {
+  const pct = total > 0 ? Math.round((s.mastered / total) * 100) : 0;
+  return `
+    <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+    <div style="display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap; margin-top:8px;">
+      <span class="badge badge-due">復習期限切れ ${s.due}</span>
+      <span class="badge badge-fresh">未学習 ${s.fresh}</span>
+      <span class="badge badge-learning">学習中 ${s.learning}</span>
+      <span class="badge badge-mastered">習得済み ${s.mastered}</span>
+    </div>
+    <p class="small-text" style="margin-top:8px;">習得率: ${pct}% (${s.mastered}/${total})</p>`;
+}
+
+function renderCatBlock(cat) {
+  const pool = basePool(cat);
+  const total = pool.length;
+  const modesForCat = Object.entries(MODES).filter(([_, m]) => m.cat === cat);
+  const blocks = modesForCat.map(([name, m]) => `
+    <div style="margin-top:12px;">
+      <h4 style="margin-bottom:6px; color:#7fb3ee; font-size:0.95em;">${m.icon} ${m.title}</h4>
+      ${renderModeProgress(computeSrsSummary(pool, name), total)}
+    </div>`).join('');
+  return `<div class="card"><h3 style="margin-bottom:6px; color:var(--accent);">${CAT_LABELS[cat]} (${total}件)</h3>${blocks}</div>`;
+}
+
+// CEFR別の習得率 (全カテゴリ・全モード合算: どれか1モードで習得済みなら習得)
+function renderCefrStats() {
+  const progress = loadProgress();
+  const levels = ['A1','A2','B1','B2'];
+  const allItems = [...basePool('word'), ...basePool('idiom'), ...basePool('phrase')];
+  const rows = levels.map(lv => {
+    const items = allItems.filter(x => x.cefr === lv);
+    let mastered = 0;
+    for (const it of items) {
+      const modes = Object.entries(MODES).filter(([_, m]) => m.cat === it.category).map(([n]) => n);
+      if (modes.some(m => { const s = getSrs(progress, it.id, m); return s && isMastered(s); })) mastered++;
+    }
+    const pct = items.length > 0 ? Math.round((mastered / items.length) * 100) : 0;
+    return `<div style="margin-bottom:10px;">
+      <div style="display:flex; justify-content:space-between; font-size:0.9em; margin-bottom:4px;">
+        <span>${lv}</span><span>${mastered}/${items.length} (${pct}%)</span></div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div></div>`;
+  }).join('');
+  return `<div class="card"><h3 style="margin-bottom:12px; color:var(--accent);">CEFRレベル別の習得率</h3>${rows}</div>`;
+}
+
+// 場面タグ別の習得率 (上位)
+function renderTagStats() {
+  const progress = loadProgress();
+  const allItems = [...basePool('word'), ...basePool('idiom'), ...basePool('phrase')];
+  const tagCount = {}, tagMastered = {};
+  for (const it of allItems) {
+    const modes = Object.entries(MODES).filter(([_, m]) => m.cat === it.category).map(([n]) => n);
+    const mastered = modes.some(m => { const s = getSrs(progress, it.id, m); return s && isMastered(s); });
+    for (const t of (it.tags || [])) {
+      tagCount[t] = (tagCount[t] || 0) + 1;
+      if (mastered) tagMastered[t] = (tagMastered[t] || 0) + 1;
+    }
+  }
+  const top = Object.keys(tagCount).sort((a, b) => tagCount[b] - tagCount[a]).slice(0, 12);
+  if (top.length === 0) return '';
+  const rows = top.map(t => {
+    const tot = tagCount[t], mas = tagMastered[t] || 0;
+    const pct = Math.round((mas / tot) * 100);
+    return `<div style="margin-bottom:8px;">
+      <div style="display:flex; justify-content:space-between; font-size:0.85em; margin-bottom:3px;">
+        <span>${tagLabel(t)}</span><span>${mas}/${tot} (${pct}%)</span></div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div></div>`;
+  }).join('');
+  return `<div class="card"><h3 style="margin-bottom:12px; color:var(--accent);">場面・トピックタグ別の習得率 (上位)</h3>${rows}</div>`;
+}
+
+function renderDashboard() {
+  const progress = loadProgress();
+  const MODE_LABELS_SHORT = {};
+  Object.entries(MODES).forEach(([n, m]) => MODE_LABELS_SHORT[n] = `${CAT_LABELS[m.cat]} ${m.icon}`);
+  const histRows = progress.history.slice(0, 10).map(h => {
+    const pct = Math.round((h.score / h.total) * 100);
+    return `<tr><td>${h.date}</td><td>${MODE_LABELS_SHORT[h.mode] || h.mode}</td><td>${h.score}/${h.total}</td><td>${pct}%</td></tr>`;
+  }).join('');
+
+  app.innerHTML = `
+    <h1>📊 進捗ダッシュボード</h1>
+    <button class="next-btn" id="back-btn" style="background:var(--panel2); color:var(--text); margin-bottom:14px;">← ホームへ戻る</button>
+    ${renderCatBlock('word')}
+    ${renderCatBlock('idiom')}
+    ${renderCatBlock('phrase')}
+    ${renderCefrStats()}
+    ${renderTagStats()}
+    <div class="card">
+      <h3 style="margin-bottom:12px; color:var(--accent);">直近セッション履歴</h3>
+      ${progress.history.length === 0
+        ? '<p class="small-text">まだセッションがありません</p>'
+        : `<table style="width:100%; font-size:0.9em;"><thead><tr style="color:var(--muted); text-align:left;">
+            <th>日付</th><th>モード</th><th>スコア</th><th>正答率</th></tr></thead><tbody>${histRows}</tbody></table>`}
+    </div>`;
+  document.getElementById('back-btn').addEventListener('click', () => { state.view = 'home'; render(); });
+}
+
+// ============================================================
+// 設定画面
+// ============================================================
+function renderSettings() {
+  const voices = window.speechSynthesis ? window.speechSynthesis.getVoices().filter(v => v.lang.startsWith('en')) : [];
+  const voiceOptions = ['<option value="">自動選択 (en-US Female優先)</option>']
+    .concat(voices.map(v => `<option value="${escapeHtml(v.name)}" ${settings.voiceName===v.name?'selected':''}>${escapeHtml(v.name)} (${v.lang})</option>`)).join('');
+
+  app.innerHTML = `
+    <h1>⚙️ 設定</h1>
+    <button class="next-btn" id="back-btn" style="background:var(--panel2); color:var(--text); margin-bottom:14px;">← ホームへ戻る</button>
+    <div class="card">
+      <div class="setting-row">
+        <div><div class="setting-label">TTS音声</div><div class="setting-desc">読み上げに使う英語音声</div></div>
+        <select class="speed-select" id="voice-select">${voiceOptions}</select>
+      </div>
+      <div class="setting-row">
+        <div><div class="setting-label">デフォルト速度</div><div class="setting-desc">クイズ開始時の読み上げ速度</div></div>
+        <select class="speed-select" id="rate-select">
+          <option value="0.7" ${settings.defaultRate==0.7?'selected':''}>ゆっくり 0.7x</option>
+          <option value="0.9" ${settings.defaultRate==0.9?'selected':''}>標準 0.9x</option>
+          <option value="1.1" ${settings.defaultRate==1.1?'selected':''}>速め 1.1x</option>
+        </select>
+      </div>
+      <div class="setting-row">
+        <div><div class="setting-label">IPA発音記号を表示</div><div class="setting-desc">/təˈmeɪtoʊ/ のような発音記号</div></div>
+        <label class="switch"><input type="checkbox" id="set-ipa" ${settings.showIpa?'checked':''}><span class="slider"></span></label>
+      </div>
+      <div class="setting-row">
+        <div><div class="setting-label">音節・強勢を表示</div><div class="setting-desc">to-MA-to のような音節区切り</div></div>
+        <label class="switch"><input type="checkbox" id="set-syll" ${settings.showSyllables?'checked':''}><span class="slider"></span></label>
+      </div>
+    </div>
+    <div class="card">
+      <h3 style="margin-bottom:12px; color:var(--accent);">データ管理</h3>
+      <button class="next-btn" id="export-btn" style="background:var(--panel2); color:var(--text);">💾 進捗をエクスポート</button>
+      <button class="next-btn" id="import-btn" style="background:var(--panel2); color:var(--text); margin-top:8px;">📂 進捗をインポート</button>
+      <input type="file" id="import-file" accept="application/json" style="display:none;">
+      <button class="next-btn" id="reset-btn" style="background:var(--bad-bg); color:var(--bad-text); margin-top:8px;">🗑 進捗データを初期化</button>
+    </div>`;
+
+  document.getElementById('back-btn').addEventListener('click', () => { state.view = 'home'; render(); });
+  document.getElementById('voice-select').addEventListener('change', e => { settings.voiceName = e.target.value || null; saveSettings(settings); });
+  document.getElementById('rate-select').addEventListener('change', e => { settings.defaultRate = parseFloat(e.target.value); saveSettings(settings); });
+  document.getElementById('set-ipa').addEventListener('change', e => { settings.showIpa = e.target.checked; saveSettings(settings); });
+  document.getElementById('set-syll').addEventListener('change', e => { settings.showSyllables = e.target.checked; saveSettings(settings); });
+  document.getElementById('export-btn').addEventListener('click', exportProgress);
+  const importFile = document.getElementById('import-file');
+  document.getElementById('import-btn').addEventListener('click', () => importFile.click());
+  importFile.addEventListener('change', importProgress);
+  document.getElementById('reset-btn').addEventListener('click', () => {
+    if (confirm('進捗データをすべて削除します。よろしいですか？')) {
+      localStorage.removeItem(STORAGE_KEY);
+      alert('進捗を初期化しました'); render();
+    }
+  });
+}
+
+function exportProgress() {
+  const blob = new Blob([JSON.stringify(loadProgress(), null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `english-quiz-progress-${today()}.json`; a.click();
+  URL.revokeObjectURL(url);
+}
+function importProgress(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      if (!data || typeof data !== 'object' || !data.srs) throw new Error('形式が不正');
+      saveProgress(Object.assign(defaultProgress(), data));
+      alert('進捗をインポートしました'); render();
+    } catch (err) { alert('インポート失敗: ' + err.message); }
+  };
+  reader.readAsText(file);
+}
+
+// ============================================================
+// ユーティリティ
+// ============================================================
+function escapeHtml(s) {
+  if (s == null) return '';
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+// 4択選択肢から英語混入を除去
+function stripEnglishHints(text) {
+  if (!text) return '';
+  let result = String(text).replace(/[（(][^）)]*[a-zA-Z][^）)]*[）)]/g, '');
+  result = result.replace(/[、，,／/ \s]+$/, '').trim();
+  return result || text;
+}
+
+// キーボードショートカット
+document.addEventListener('keydown', e => {
+  if (state.view === 'quiz' && state.selectedChoice === null) {
+    const idx = { '1':0, '2':1, '3':2, '4':3, 'a':0, 'b':1, 'c':2, 'd':3 }[e.key.toLowerCase()];
+    if (idx !== undefined) handleAnswer(idx);
+    else if (e.key === ' ' || e.key === 'Enter') { const b = document.getElementById('play-tts'); if (b) b.click(); e.preventDefault(); }
+  } else if (e.key === 'Enter') {
+    const b = document.getElementById('next-btn'); if (b) b.click();
+  }
+});
+
+if (window.speechSynthesis) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+
+render();
+</script>
+</body>
+</html>
