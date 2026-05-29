@@ -1,0 +1,40 @@
+# Secrets & environment
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# Rollback backups
+*.bak
+.bak/
+
+# Runtime output
+output/temp/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+
+# Node.js
+node_modules/
+npm-debug.log*
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
+*~
+
+# Claude Code local settings
+.claude/settings.local.json
+
+# Git management opt-out marker
+.no-git-suggestion
