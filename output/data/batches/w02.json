@@ -1,0 +1,2048 @@
+[
+{
+"id": "w_blanket_NOUN",
+"category": "word",
+"lemma": "blanket",
+"surface": "blanket",
+"pos": "NOUN",
+"cefr": "A1",
+"ipa": "/ˈblæŋkɪt/",
+"syllables": "BLAN-ket",
+"stress_pos": 0,
+"meaning_ja": "毛布",
+"tags": [
+"home"
+],
+"example_en": "I pulled the warm blanket over me on the cold night.",
+"example_ja": "寒い夜、暖かい毛布を体にかけた。",
+"tts_text": "blanket"
+},
+{
+"id": "w_pillow_NOUN",
+"category": "word",
+"lemma": "pillow",
+"surface": "pillow",
+"pos": "NOUN",
+"cefr": "A1",
+"ipa": "/ˈpɪloʊ/",
+"syllables": "PIL-low",
+"stress_pos": 0,
+"meaning_ja": "枕",
+"tags": [
+"home"
+],
+"example_en": "This soft pillow helps me sleep much better at night.",
+"example_ja": "この柔らかい枕のおかげで夜よく眠れる。",
+"tts_text": "pillow"
+},
+{
+"id": "w_sheet_NOUN",
+"category": "word",
+"lemma": "sheet",
+"surface": "sheet",
+"pos": "NOUN",
+"cefr": "A1",
+"ipa": "/ʃiːt/",
+"syllables": "SHEET",
+"stress_pos": 0,
+"meaning_ja": "シーツ／（紙の）一枚",
+"tags": [
+"home"
+],
+"example_en": "She put clean sheets on the bed this morning.",
+"example_ja": "彼女は今朝ベッドに清潔なシーツを敷いた。",
+"tts_text": "sheet"
+},
+{
+"id": "w_curtain_NOUN",
+"category": "word",
+"lemma": "curtain",
+"surface": "curtain",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/ˈkɜːrtən/",
+"syllables": "CUR-tain",
+"stress_pos": 0,
+"meaning_ja": "カーテン",
+"tags": [
+"home"
+],
+"example_en": "Please open the curtains to let some sunlight in.",
+"example_ja": "日光を入れるためにカーテンを開けてください。",
+"tts_text": "curtain"
+},
+{
+"id": "w_carpet_NOUN",
+"category": "word",
+"lemma": "carpet",
+"surface": "carpet",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/ˈkɑːrpɪt/",
+"syllables": "CAR-pet",
+"stress_pos": 0,
+"meaning_ja": "じゅうたん／カーペット",
+"tags": [
+"home"
+],
+"example_en": "We bought a soft red carpet for the living room.",
+"example_ja": "居間用に柔らかい赤いカーペットを買った。",
+"tts_text": "carpet"
+},
+{
+"id": "w_mirror_NOUN",
+"category": "word",
+"lemma": "mirror",
+"surface": "mirror",
+"pos": "NOUN",
+"cefr": "A1",
+"ipa": "/ˈmɪrər/",
+"syllables": "MIR-ror",
+"stress_pos": 0,
+"meaning_ja": "鏡",
+"tags": [
+"home"
+],
+"example_en": "She looked in the mirror before leaving the house.",
+"example_ja": "彼女は出かける前に鏡を見た。",
+"tts_text": "mirror"
+},
+{
+"id": "w_towel_NOUN",
+"category": "word",
+"lemma": "towel",
+"surface": "towel",
+"pos": "NOUN",
+"cefr": "A1",
+"ipa": "/ˈtaʊəl/",
+"syllables": "TOW-el",
+"stress_pos": 0,
+"meaning_ja": "タオル",
+"tags": [
+"home"
+],
+"example_en": "Take a clean towel after you finish your shower.",
+"example_ja": "シャワーの後は清潔なタオルを使ってね。",
+"tts_text": "towel"
+},
+{
+"id": "w_soap_NOUN",
+"category": "word",
+"lemma": "soap",
+"surface": "soap",
+"pos": "NOUN",
+"cefr": "A1",
+"ipa": "/soʊp/",
+"syllables": "SOAP",
+"stress_pos": 0,
+"meaning_ja": "せっけん",
+"tags": [
+"home"
+],
+"example_en": "Wash your hands with soap before you eat dinner.",
+"example_ja": "夕食前にせっけんで手を洗いなさい。",
+"tts_text": "soap"
+},
+{
+"id": "w_toothbrush_NOUN",
+"category": "word",
+"lemma": "toothbrush",
+"surface": "toothbrush",
+"pos": "NOUN",
+"cefr": "A1",
+"ipa": "/ˈtuːθbrʌʃ/",
+"syllables": "TOOTH-brush",
+"stress_pos": 0,
+"meaning_ja": "歯ブラシ",
+"tags": [
+"home",
+"body"
+],
+"example_en": "I bought a new blue toothbrush at the drugstore.",
+"example_ja": "ドラッグストアで新しい青い歯ブラシを買った。",
+"tts_text": "toothbrush"
+},
+{
+"id": "w_toothpaste_NOUN",
+"category": "word",
+"lemma": "toothpaste",
+"surface": "toothpaste",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/ˈtuːθpeɪst/",
+"syllables": "TOOTH-paste",
+"stress_pos": 0,
+"meaning_ja": "歯磨き粉",
+"tags": [
+"home",
+"body"
+],
+"example_en": "We are running out of toothpaste, so buy some more.",
+"example_ja": "歯磨き粉が切れそうだから買い足して。",
+"tts_text": "toothpaste"
+},
+{
+"id": "w_comb_NOUN",
+"category": "word",
+"lemma": "comb",
+"surface": "comb",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/koʊm/",
+"syllables": "COMB",
+"stress_pos": 0,
+"meaning_ja": "くし",
+"tags": [
+"home",
+"body"
+],
+"example_en": "He used a comb to fix his messy hair.",
+"example_ja": "彼はくしで乱れた髪を整えた。",
+"tts_text": "comb"
+},
+{
+"id": "w_brush_NOUN",
+"category": "word",
+"lemma": "brush",
+"surface": "brush",
+"pos": "NOUN",
+"cefr": "A1",
+"ipa": "/brʌʃ/",
+"syllables": "BRUSH",
+"stress_pos": 0,
+"meaning_ja": "ブラシ／筆",
+"tags": [
+"home"
+],
+"example_en": "She cleaned the paint brush carefully after the lesson.",
+"example_ja": "彼女は授業の後、筆を丁寧に洗った。",
+"tts_text": "brush"
+},
+{
+"id": "w_razor_NOUN",
+"category": "word",
+"lemma": "razor",
+"surface": "razor",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/ˈreɪzər/",
+"syllables": "RA-zor",
+"stress_pos": 0,
+"meaning_ja": "かみそり",
+"tags": [
+"home",
+"body"
+],
+"example_en": "He shaved his face with a new razor this morning.",
+"example_ja": "彼は今朝新しいかみそりで顔をそった。",
+"tts_text": "razor"
+},
+{
+"id": "w_shampoo_NOUN",
+"category": "word",
+"lemma": "shampoo",
+"surface": "shampoo",
+"pos": "NOUN",
+"cefr": "A1",
+"ipa": "/ʃæmˈpuː/",
+"syllables": "sham-POO",
+"stress_pos": 1,
+"meaning_ja": "シャンプー",
+"tags": [
+"home",
+"body"
+],
+"example_en": "This shampoo smells like fresh lemons and oranges.",
+"example_ja": "このシャンプーは新鮮なレモンやオレンジの香りがする。",
+"tts_text": "shampoo"
+},
+{
+"id": "w_bucket_NOUN",
+"category": "word",
+"lemma": "bucket",
+"surface": "bucket",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/ˈbʌkɪt/",
+"syllables": "BUCK-et",
+"stress_pos": 0,
+"meaning_ja": "バケツ",
+"tags": [
+"home"
+],
+"example_en": "He filled the bucket with water to wash the car.",
+"example_ja": "彼は車を洗うためにバケツに水を入れた。",
+"tts_text": "bucket"
+},
+{
+"id": "w_broom_NOUN",
+"category": "word",
+"lemma": "broom",
+"surface": "broom",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/bruːm/",
+"syllables": "BROOM",
+"stress_pos": 0,
+"meaning_ja": "ほうき",
+"tags": [
+"home"
+],
+"example_en": "She swept the floor with an old wooden broom.",
+"example_ja": "彼女は古い木のほうきで床を掃いた。",
+"tts_text": "broom"
+},
+{
+"id": "w_basket_NOUN",
+"category": "word",
+"lemma": "basket",
+"surface": "basket",
+"pos": "NOUN",
+"cefr": "A1",
+"ipa": "/ˈbæskɪt/",
+"syllables": "BAS-ket",
+"stress_pos": 0,
+"meaning_ja": "かご／バスケット",
+"tags": [
+"home",
+"shopping"
+],
+"example_en": "She put the fresh fruit in a small basket.",
+"example_ja": "彼女は新鮮な果物を小さなかごに入れた。",
+"tts_text": "basket"
+},
+{
+"id": "w_candle_NOUN",
+"category": "word",
+"lemma": "candle",
+"surface": "candle",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/ˈkændl/",
+"syllables": "CAN-dle",
+"stress_pos": 0,
+"meaning_ja": "ろうそく",
+"tags": [
+"home"
+],
+"example_en": "We lit a candle when the power went out.",
+"example_ja": "停電のときろうそくに火をつけた。",
+"tts_text": "candle"
+},
+{
+"id": "w_battery_NOUN",
+"category": "word",
+"lemma": "battery",
+"surface": "battery",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/ˈbætəri/",
+"syllables": "BAT-ter-y",
+"stress_pos": 0,
+"meaning_ja": "電池／バッテリー",
+"tags": [
+"home"
+],
+"example_en": "The remote stopped working because the battery is dead.",
+"example_ja": "電池が切れてリモコンが動かなくなった。",
+"tts_text": "battery"
+},
+{
+"id": "w_lamp_NOUN",
+"category": "word",
+"lemma": "lamp",
+"surface": "lamp",
+"pos": "NOUN",
+"cefr": "A1",
+"ipa": "/læmp/",
+"syllables": "LAMP",
+"stress_pos": 0,
+"meaning_ja": "ランプ／電気スタンド",
+"tags": [
+"home"
+],
+"example_en": "I turned on the lamp to read my book in bed.",
+"example_ja": "ベッドで本を読むためにランプをつけた。",
+"tts_text": "lamp"
+},
+{
+"id": "w_clock_NOUN",
+"category": "word",
+"lemma": "clock",
+"surface": "clock",
+"pos": "NOUN",
+"cefr": "A1",
+"ipa": "/klɑːk/",
+"syllables": "CLOCK",
+"stress_pos": 0,
+"meaning_ja": "時計（置き時計・掛け時計）",
+"tags": [
+"home",
+"time"
+],
+"example_en": "The clock on the wall says it is almost noon.",
+"example_ja": "壁の時計はもうすぐ正午だと示している。",
+"tts_text": "clock"
+},
+{
+"id": "w_calendar_NOUN",
+"category": "word",
+"lemma": "calendar",
+"surface": "calendar",
+"pos": "NOUN",
+"cefr": "A1",
+"ipa": "/ˈkæləndər/",
+"syllables": "CAL-en-dar",
+"stress_pos": 0,
+"meaning_ja": "カレンダー",
+"tags": [
+"home",
+"time"
+],
+"example_en": "I marked my birthday on the kitchen calendar.",
+"example_ja": "台所のカレンダーに誕生日の印をつけた。",
+"tts_text": "calendar"
+},
+{
+"id": "w_frame_NOUN",
+"category": "word",
+"lemma": "frame",
+"surface": "frame",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/freɪm/",
+"syllables": "FRAME",
+"stress_pos": 0,
+"meaning_ja": "額縁／枠",
+"tags": [
+"home"
+],
+"example_en": "She put the family photo in a wooden frame.",
+"example_ja": "彼女は家族写真を木の額縁に入れた。",
+"tts_text": "frame"
+},
+{
+"id": "w_shelf_NOUN",
+"category": "word",
+"lemma": "shelf",
+"surface": "shelf",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/ʃelf/",
+"syllables": "SHELF",
+"stress_pos": 0,
+"meaning_ja": "棚",
+"tags": [
+"home"
+],
+"example_en": "He placed the new books on the top shelf.",
+"example_ja": "彼は新しい本を一番上の棚に置いた。",
+"tts_text": "shelf"
+},
+{
+"id": "w_drawer_NOUN",
+"category": "word",
+"lemma": "drawer",
+"surface": "drawer",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/drɔːr/",
+"syllables": "DRAW-er",
+"stress_pos": 0,
+"meaning_ja": "引き出し",
+"tags": [
+"home"
+],
+"example_en": "My socks are in the bottom drawer of the dresser.",
+"example_ja": "私の靴下はたんすの一番下の引き出しにある。",
+"tts_text": "drawer"
+},
+{
+"id": "w_closet_NOUN",
+"category": "word",
+"lemma": "closet",
+"surface": "closet",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/ˈklɑːzɪt/",
+"syllables": "CLOS-et",
+"stress_pos": 0,
+"meaning_ja": "クローゼット／物入れ",
+"tags": [
+"home"
+],
+"example_en": "Please hang your coat in the closet by the door.",
+"example_ja": "上着はドアのそばのクローゼットに掛けてね。",
+"tts_text": "closet"
+},
+{
+"id": "w_sink_NOUN",
+"category": "word",
+"lemma": "sink",
+"surface": "sink",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/sɪŋk/",
+"syllables": "SINK",
+"stress_pos": 0,
+"meaning_ja": "流し／洗面台",
+"tags": [
+"home"
+],
+"example_en": "There are dirty dishes in the kitchen sink.",
+"example_ja": "台所の流しに汚れた皿がある。",
+"tts_text": "sink"
+},
+{
+"id": "w_faucet_NOUN",
+"category": "word",
+"lemma": "faucet",
+"surface": "faucet",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/ˈfɔːsɪt/",
+"syllables": "FAU-cet",
+"stress_pos": 0,
+"meaning_ja": "蛇口",
+"tags": [
+"home"
+],
+"example_en": "Please turn off the faucet to save water.",
+"example_ja": "水を節約するために蛇口を閉めてください。",
+"tts_text": "faucet"
+},
+{
+"id": "w_oven_NOUN",
+"category": "word",
+"lemma": "oven",
+"surface": "oven",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/ˈʌvn/",
+"syllables": "OV-en",
+"stress_pos": 0,
+"meaning_ja": "オーブン",
+"tags": [
+"home",
+"food"
+],
+"example_en": "She baked a cake in the oven for dessert.",
+"example_ja": "彼女はデザートにオーブンでケーキを焼いた。",
+"tts_text": "oven"
+},
+{
+"id": "w_stove_NOUN",
+"category": "word",
+"lemma": "stove",
+"surface": "stove",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/stoʊv/",
+"syllables": "STOVE",
+"stress_pos": 0,
+"meaning_ja": "コンロ／レンジ",
+"tags": [
+"home",
+"food"
+],
+"example_en": "He heated the soup on the kitchen stove.",
+"example_ja": "彼は台所のコンロでスープを温めた。",
+"tts_text": "stove"
+},
+{
+"id": "w_fridge_NOUN",
+"category": "word",
+"lemma": "fridge",
+"surface": "fridge",
+"pos": "NOUN",
+"cefr": "A1",
+"ipa": "/frɪdʒ/",
+"syllables": "FRIDGE",
+"stress_pos": 0,
+"meaning_ja": "冷蔵庫",
+"tags": [
+"home",
+"food",
+"informal"
+],
+"example_en": "There is cold milk in the fridge if you want some.",
+"example_ja": "飲みたければ冷蔵庫に冷たい牛乳があるよ。",
+"tts_text": "fridge"
+},
+{
+"id": "w_kettle_NOUN",
+"category": "word",
+"lemma": "kettle",
+"surface": "kettle",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/ˈketl/",
+"syllables": "KET-tle",
+"stress_pos": 0,
+"meaning_ja": "やかん",
+"tags": [
+"home",
+"food"
+],
+"example_en": "She boiled water in the kettle to make tea.",
+"example_ja": "彼女はお茶を入れるためにやかんで湯を沸かした。",
+"tts_text": "kettle"
+},
+{
+"id": "w_pan_NOUN",
+"category": "word",
+"lemma": "pan",
+"surface": "pan",
+"pos": "NOUN",
+"cefr": "A1",
+"ipa": "/pæn/",
+"syllables": "PAN",
+"stress_pos": 0,
+"meaning_ja": "フライパン／鍋",
+"tags": [
+"home",
+"food"
+],
+"example_en": "Fry the eggs in a hot pan with some butter.",
+"example_ja": "バターを入れた熱いフライパンで卵を焼いて。",
+"tts_text": "pan"
+},
+{
+"id": "w_pot_NOUN",
+"category": "word",
+"lemma": "pot",
+"surface": "pot",
+"pos": "NOUN",
+"cefr": "A1",
+"ipa": "/pɑːt/",
+"syllables": "POT",
+"stress_pos": 0,
+"meaning_ja": "鍋／ポット",
+"tags": [
+"home",
+"food"
+],
+"example_en": "She cooked rice in a large metal pot.",
+"example_ja": "彼女は大きな金属の鍋でご飯を炊いた。",
+"tts_text": "pot"
+},
+{
+"id": "w_bowl_NOUN",
+"category": "word",
+"lemma": "bowl",
+"surface": "bowl",
+"pos": "NOUN",
+"cefr": "A1",
+"ipa": "/boʊl/",
+"syllables": "BOWL",
+"stress_pos": 0,
+"meaning_ja": "ボウル／わん",
+"tags": [
+"home",
+"food"
+],
+"example_en": "He ate a bowl of cereal for breakfast.",
+"example_ja": "彼は朝食にシリアルを一杯食べた。",
+"tts_text": "bowl"
+},
+{
+"id": "w_plate_NOUN",
+"category": "word",
+"lemma": "plate",
+"surface": "plate",
+"pos": "NOUN",
+"cefr": "A1",
+"ipa": "/pleɪt/",
+"syllables": "PLATE",
+"stress_pos": 0,
+"meaning_ja": "皿",
+"tags": [
+"home",
+"food",
+"restaurant"
+],
+"example_en": "Please put the clean plates back on the table.",
+"example_ja": "きれいな皿をテーブルに戻してください。",
+"tts_text": "plate"
+},
+{
+"id": "w_dish_NOUN",
+"category": "word",
+"lemma": "dish",
+"surface": "dish",
+"pos": "NOUN",
+"cefr": "A1",
+"ipa": "/dɪʃ/",
+"syllables": "DISH",
+"stress_pos": 0,
+"meaning_ja": "皿／料理",
+"tags": [
+"home",
+"food",
+"restaurant"
+],
+"example_en": "This dish is my favorite at the new restaurant.",
+"example_ja": "この料理は新しいレストランで私の一番のお気に入りだ。",
+"tts_text": "dish"
+},
+{
+"id": "w_cup_NOUN",
+"category": "word",
+"lemma": "cup",
+"surface": "cup",
+"pos": "NOUN",
+"cefr": "A1",
+"ipa": "/kʌp/",
+"syllables": "CUP",
+"stress_pos": 0,
+"meaning_ja": "カップ／茶わん",
+"tags": [
+"home",
+"food"
+],
+"example_en": "Would you like a cup of hot coffee?",
+"example_ja": "温かいコーヒーを一杯いかがですか。",
+"tts_text": "cup"
+},
+{
+"id": "w_glass_NOUN",
+"category": "word",
+"lemma": "glass",
+"surface": "glass",
+"pos": "NOUN",
+"cefr": "A1",
+"ipa": "/ɡlæs/",
+"syllables": "GLASS",
+"stress_pos": 0,
+"meaning_ja": "コップ／ガラス",
+"tags": [
+"home",
+"food"
+],
+"example_en": "She poured cold water into a tall glass.",
+"example_ja": "彼女は背の高いコップに冷たい水を注いだ。",
+"tts_text": "glass"
+},
+{
+"id": "w_mug_NOUN",
+"category": "word",
+"lemma": "mug",
+"surface": "mug",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/mʌɡ/",
+"syllables": "MUG",
+"stress_pos": 0,
+"meaning_ja": "マグカップ",
+"tags": [
+"home",
+"food"
+],
+"example_en": "He drinks tea from a big blue mug every morning.",
+"example_ja": "彼は毎朝大きな青いマグカップでお茶を飲む。",
+"tts_text": "mug"
+},
+{
+"id": "w_fork_NOUN",
+"category": "word",
+"lemma": "fork",
+"surface": "fork",
+"pos": "NOUN",
+"cefr": "A1",
+"ipa": "/fɔːrk/",
+"syllables": "FORK",
+"stress_pos": 0,
+"meaning_ja": "フォーク",
+"tags": [
+"home",
+"food",
+"restaurant"
+],
+"example_en": "Use a fork to eat the salad, please.",
+"example_ja": "サラダはフォークで食べてください。",
+"tts_text": "fork"
+},
+{
+"id": "w_knife_NOUN",
+"category": "word",
+"lemma": "knife",
+"surface": "knife",
+"pos": "NOUN",
+"cefr": "A1",
+"ipa": "/naɪf/",
+"syllables": "KNIFE",
+"stress_pos": 0,
+"meaning_ja": "ナイフ／包丁",
+"tags": [
+"home",
+"food",
+"restaurant"
+],
+"example_en": "Be careful with that sharp knife in the kitchen.",
+"example_ja": "台所のその鋭いナイフに気をつけて。",
+"tts_text": "knife"
+},
+{
+"id": "w_spoon_NOUN",
+"category": "word",
+"lemma": "spoon",
+"surface": "spoon",
+"pos": "NOUN",
+"cefr": "A1",
+"ipa": "/spuːn/",
+"syllables": "SPOON",
+"stress_pos": 0,
+"meaning_ja": "スプーン",
+"tags": [
+"home",
+"food",
+"restaurant"
+],
+"example_en": "He stirred his coffee with a small spoon.",
+"example_ja": "彼は小さなスプーンでコーヒーをかき混ぜた。",
+"tts_text": "spoon"
+},
+{
+"id": "w_napkin_NOUN",
+"category": "word",
+"lemma": "napkin",
+"surface": "napkin",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/ˈnæpkɪn/",
+"syllables": "NAP-kin",
+"stress_pos": 0,
+"meaning_ja": "ナプキン",
+"tags": [
+"food",
+"restaurant"
+],
+"example_en": "Could you pass me a paper napkin, please?",
+"example_ja": "紙ナプキンを取ってもらえますか。",
+"tts_text": "napkin"
+},
+{
+"id": "w_tray_NOUN",
+"category": "word",
+"lemma": "tray",
+"surface": "tray",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/treɪ/",
+"syllables": "TRAY",
+"stress_pos": 0,
+"meaning_ja": "お盆／トレー",
+"tags": [
+"home",
+"food",
+"restaurant"
+],
+"example_en": "She carried the drinks on a round tray.",
+"example_ja": "彼女は丸いお盆で飲み物を運んだ。",
+"tts_text": "tray"
+},
+{
+"id": "w_bottle_NOUN",
+"category": "word",
+"lemma": "bottle",
+"surface": "bottle",
+"pos": "NOUN",
+"cefr": "A1",
+"ipa": "/ˈbɑːtl/",
+"syllables": "BOT-tle",
+"stress_pos": 0,
+"meaning_ja": "びん／ボトル",
+"tags": [
+"food",
+"shopping"
+],
+"example_en": "I bought a bottle of water at the station.",
+"example_ja": "駅で水のボトルを一本買った。",
+"tts_text": "bottle"
+},
+{
+"id": "w_jar_NOUN",
+"category": "word",
+"lemma": "jar",
+"surface": "jar",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/dʒɑːr/",
+"syllables": "JAR",
+"stress_pos": 0,
+"meaning_ja": "びん（広口）／つぼ",
+"tags": [
+"food",
+"home"
+],
+"example_en": "There is a jar of strawberry jam in the cupboard.",
+"example_ja": "戸棚にイチゴジャムのびんがある。",
+"tts_text": "jar"
+},
+{
+"id": "w_can_NOUN",
+"category": "word",
+"lemma": "can",
+"surface": "can",
+"pos": "NOUN",
+"cefr": "A1",
+"ipa": "/kæn/",
+"syllables": "CAN",
+"stress_pos": 0,
+"meaning_ja": "缶",
+"tags": [
+"food",
+"shopping"
+],
+"example_en": "He opened a can of soup for lunch.",
+"example_ja": "彼は昼食にスープの缶を開けた。",
+"tts_text": "can"
+},
+{
+"id": "w_box_NOUN",
+"category": "word",
+"lemma": "box",
+"surface": "box",
+"pos": "NOUN",
+"cefr": "A1",
+"ipa": "/bɑːks/",
+"syllables": "BOX",
+"stress_pos": 0,
+"meaning_ja": "箱",
+"tags": [
+"home",
+"shopping"
+],
+"example_en": "We packed the old books in a big box.",
+"example_ja": "古い本を大きな箱に詰めた。",
+"tts_text": "box"
+},
+{
+"id": "w_bag_NOUN",
+"category": "word",
+"lemma": "bag",
+"surface": "bag",
+"pos": "NOUN",
+"cefr": "A1",
+"ipa": "/bæɡ/",
+"syllables": "BAG",
+"stress_pos": 0,
+"meaning_ja": "袋／かばん",
+"tags": [
+"shopping",
+"home"
+],
+"example_en": "She carried her groceries home in a paper bag.",
+"example_ja": "彼女は買った食料品を紙袋で家に持ち帰った。",
+"tts_text": "bag"
+},
+{
+"id": "w_wallet_NOUN",
+"category": "word",
+"lemma": "wallet",
+"surface": "wallet",
+"pos": "NOUN",
+"cefr": "A1",
+"ipa": "/ˈwɑːlɪt/",
+"syllables": "WAL-let",
+"stress_pos": 0,
+"meaning_ja": "財布",
+"tags": [
+"shopping"
+],
+"example_en": "He left his wallet at home and had no money.",
+"example_ja": "彼は財布を家に忘れてお金がなかった。",
+"tts_text": "wallet"
+},
+{
+"id": "w_purse_NOUN",
+"category": "word",
+"lemma": "purse",
+"surface": "purse",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/pɜːrs/",
+"syllables": "PURSE",
+"stress_pos": 0,
+"meaning_ja": "ハンドバッグ／財布",
+"tags": [
+"shopping",
+"clothes"
+],
+"example_en": "She kept her keys in a small black purse.",
+"example_ja": "彼女は鍵を小さな黒いハンドバッグに入れていた。",
+"tts_text": "purse"
+},
+{
+"id": "w_key_NOUN",
+"category": "word",
+"lemma": "key",
+"surface": "key",
+"pos": "NOUN",
+"cefr": "A1",
+"ipa": "/kiː/",
+"syllables": "KEY",
+"stress_pos": 0,
+"meaning_ja": "鍵",
+"tags": [
+"home"
+],
+"example_en": "I cannot find the key to the front door.",
+"example_ja": "玄関の鍵が見つからない。",
+"tts_text": "key"
+},
+{
+"id": "w_umbrella_NOUN",
+"category": "word",
+"lemma": "umbrella",
+"surface": "umbrella",
+"pos": "NOUN",
+"cefr": "A1",
+"ipa": "/ʌmˈbrelə/",
+"syllables": "um-BREL-la",
+"stress_pos": 1,
+"meaning_ja": "傘",
+"tags": [
+"weather"
+],
+"example_en": "Take an umbrella because it might rain later.",
+"example_ja": "あとで雨が降るかもしれないから傘を持って行って。",
+"tts_text": "umbrella"
+},
+{
+"id": "w_glasses_NOUN",
+"category": "word",
+"lemma": "glasses",
+"surface": "glasses",
+"pos": "NOUN",
+"cefr": "A1",
+"ipa": "/ˈɡlæsɪz/",
+"syllables": "GLASS-es",
+"stress_pos": 0,
+"meaning_ja": "めがね",
+"tags": [
+"body",
+"clothes"
+],
+"example_en": "He wears glasses to read small letters.",
+"example_ja": "彼は小さな文字を読むためにめがねをかける。",
+"tts_text": "glasses"
+},
+{
+"id": "w_watch_NOUN",
+"category": "word",
+"lemma": "watch",
+"surface": "watch",
+"pos": "NOUN",
+"cefr": "A1",
+"ipa": "/wɑːtʃ/",
+"syllables": "WATCH",
+"stress_pos": 0,
+"meaning_ja": "腕時計",
+"tags": [
+"time",
+"clothes"
+],
+"example_en": "My grandfather gave me this old silver watch.",
+"example_ja": "祖父がこの古い銀の腕時計をくれた。",
+"tts_text": "watch"
+},
+{
+"id": "w_ring_NOUN",
+"category": "word",
+"lemma": "ring",
+"surface": "ring",
+"pos": "NOUN",
+"cefr": "A1",
+"ipa": "/rɪŋ/",
+"syllables": "RING",
+"stress_pos": 0,
+"meaning_ja": "指輪",
+"tags": [
+"clothes"
+],
+"example_en": "She wears a gold ring on her left hand.",
+"example_ja": "彼女は左手に金の指輪をしている。",
+"tts_text": "ring"
+},
+{
+"id": "w_necklace_NOUN",
+"category": "word",
+"lemma": "necklace",
+"surface": "necklace",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/ˈnekləs/",
+"syllables": "NECK-lace",
+"stress_pos": 0,
+"meaning_ja": "ネックレス",
+"tags": [
+"clothes"
+],
+"example_en": "He bought a pearl necklace for his wife.",
+"example_ja": "彼は妻に真珠のネックレスを買った。",
+"tts_text": "necklace"
+},
+{
+"id": "w_button_NOUN",
+"category": "word",
+"lemma": "button",
+"surface": "button",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/ˈbʌtn/",
+"syllables": "BUT-ton",
+"stress_pos": 0,
+"meaning_ja": "ボタン",
+"tags": [
+"clothes",
+"home"
+],
+"example_en": "A button fell off my shirt this morning.",
+"example_ja": "今朝シャツのボタンが取れた。",
+"tts_text": "button"
+},
+{
+"id": "w_pocket_NOUN",
+"category": "word",
+"lemma": "pocket",
+"surface": "pocket",
+"pos": "NOUN",
+"cefr": "A1",
+"ipa": "/ˈpɑːkɪt/",
+"syllables": "POCK-et",
+"stress_pos": 0,
+"meaning_ja": "ポケット",
+"tags": [
+"clothes"
+],
+"example_en": "He put his phone in his coat pocket.",
+"example_ja": "彼は携帯電話を上着のポケットに入れた。",
+"tts_text": "pocket"
+},
+{
+"id": "w_belt_NOUN",
+"category": "word",
+"lemma": "belt",
+"surface": "belt",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/belt/",
+"syllables": "BELT",
+"stress_pos": 0,
+"meaning_ja": "ベルト",
+"tags": [
+"clothes"
+],
+"example_en": "He wore a brown leather belt with his jeans.",
+"example_ja": "彼はジーンズに茶色の革のベルトをした。",
+"tts_text": "belt"
+},
+{
+"id": "w_scarf_NOUN",
+"category": "word",
+"lemma": "scarf",
+"surface": "scarf",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/skɑːrf/",
+"syllables": "SCARF",
+"stress_pos": 0,
+"meaning_ja": "マフラー／スカーフ",
+"tags": [
+"clothes",
+"weather"
+],
+"example_en": "She wrapped a warm scarf around her neck.",
+"example_ja": "彼女は首に暖かいマフラーを巻いた。",
+"tts_text": "scarf"
+},
+{
+"id": "w_glove_NOUN",
+"category": "word",
+"lemma": "glove",
+"surface": "glove",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/ɡlʌv/",
+"syllables": "GLOVE",
+"stress_pos": 0,
+"meaning_ja": "手袋",
+"tags": [
+"clothes",
+"weather"
+],
+"example_en": "I lost one glove on the way to school.",
+"example_ja": "学校に行く途中で手袋を片方なくした。",
+"tts_text": "glove"
+},
+{
+"id": "w_sock_NOUN",
+"category": "word",
+"lemma": "sock",
+"surface": "sock",
+"pos": "NOUN",
+"cefr": "A1",
+"ipa": "/sɑːk/",
+"syllables": "SOCK",
+"stress_pos": 0,
+"meaning_ja": "靴下",
+"tags": [
+"clothes"
+],
+"example_en": "He could not find a matching sock this morning.",
+"example_ja": "彼は今朝そろいの靴下を見つけられなかった。",
+"tts_text": "sock"
+},
+{
+"id": "w_boot_NOUN",
+"category": "word",
+"lemma": "boot",
+"surface": "boot",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/buːt/",
+"syllables": "BOOT",
+"stress_pos": 0,
+"meaning_ja": "ブーツ／長靴",
+"tags": [
+"clothes",
+"weather"
+],
+"example_en": "She wore tall boots in the deep snow.",
+"example_ja": "彼女は深い雪の中で背の高いブーツを履いた。",
+"tts_text": "boot"
+},
+{
+"id": "w_sandal_NOUN",
+"category": "word",
+"lemma": "sandal",
+"surface": "sandal",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/ˈsændl/",
+"syllables": "SAN-dal",
+"stress_pos": 0,
+"meaning_ja": "サンダル",
+"tags": [
+"clothes"
+],
+"example_en": "He wore sandals on the warm summer beach.",
+"example_ja": "彼は暖かい夏のビーチでサンダルを履いた。",
+"tts_text": "sandal"
+},
+{
+"id": "w_uniform_NOUN",
+"category": "word",
+"lemma": "uniform",
+"surface": "uniform",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/ˈjuːnɪfɔːrm/",
+"syllables": "U-ni-form",
+"stress_pos": 0,
+"meaning_ja": "制服",
+"tags": [
+"clothes",
+"school"
+],
+"example_en": "All the students wear a blue uniform at school.",
+"example_ja": "その学校の生徒は全員青い制服を着る。",
+"tts_text": "uniform"
+},
+{
+"id": "w_envelope_NOUN",
+"category": "word",
+"lemma": "envelope",
+"surface": "envelope",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/ˈenvəloʊp/",
+"syllables": "EN-ve-lope",
+"stress_pos": 0,
+"meaning_ja": "封筒",
+"tags": [
+"home",
+"business"
+],
+"example_en": "She put the letter inside a white envelope.",
+"example_ja": "彼女は手紙を白い封筒に入れた。",
+"tts_text": "envelope"
+},
+{
+"id": "w_stamp_NOUN",
+"category": "word",
+"lemma": "stamp",
+"surface": "stamp",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/stæmp/",
+"syllables": "STAMP",
+"stress_pos": 0,
+"meaning_ja": "切手",
+"tags": [
+"home"
+],
+"example_en": "You need a stamp to mail this postcard.",
+"example_ja": "このはがきを送るには切手が必要だ。",
+"tts_text": "stamp"
+},
+{
+"id": "w_notebook_NOUN",
+"category": "word",
+"lemma": "notebook",
+"surface": "notebook",
+"pos": "NOUN",
+"cefr": "A1",
+"ipa": "/ˈnoʊtbʊk/",
+"syllables": "NOTE-book",
+"stress_pos": 0,
+"meaning_ja": "ノート",
+"tags": [
+"school",
+"home"
+],
+"example_en": "She wrote the new words in her notebook.",
+"example_ja": "彼女は新しい単語をノートに書いた。",
+"tts_text": "notebook"
+},
+{
+"id": "w_pencil_NOUN",
+"category": "word",
+"lemma": "pencil",
+"surface": "pencil",
+"pos": "NOUN",
+"cefr": "A1",
+"ipa": "/ˈpensl/",
+"syllables": "PEN-cil",
+"stress_pos": 0,
+"meaning_ja": "鉛筆",
+"tags": [
+"school"
+],
+"example_en": "He drew a picture with a yellow pencil.",
+"example_ja": "彼は黄色い鉛筆で絵を描いた。",
+"tts_text": "pencil"
+},
+{
+"id": "w_pen_NOUN",
+"category": "word",
+"lemma": "pen",
+"surface": "pen",
+"pos": "NOUN",
+"cefr": "A1",
+"ipa": "/pen/",
+"syllables": "PEN",
+"stress_pos": 0,
+"meaning_ja": "ペン",
+"tags": [
+"school",
+"business"
+],
+"example_en": "Can I borrow your pen for a minute?",
+"example_ja": "少しペンを貸してもらえますか。",
+"tts_text": "pen"
+},
+{
+"id": "w_eraser_NOUN",
+"category": "word",
+"lemma": "eraser",
+"surface": "eraser",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/ɪˈreɪsər/",
+"syllables": "e-RAS-er",
+"stress_pos": 1,
+"meaning_ja": "消しゴム",
+"tags": [
+"school"
+],
+"example_en": "She used an eraser to fix her mistake.",
+"example_ja": "彼女は消しゴムで間違いを直した。",
+"tts_text": "eraser"
+},
+{
+"id": "w_ruler_NOUN",
+"category": "word",
+"lemma": "ruler",
+"surface": "ruler",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/ˈruːlər/",
+"syllables": "RUL-er",
+"stress_pos": 0,
+"meaning_ja": "定規",
+"tags": [
+"school"
+],
+"example_en": "He drew a straight line with a ruler.",
+"example_ja": "彼は定規でまっすぐな線を引いた。",
+"tts_text": "ruler"
+},
+{
+"id": "w_scissors_NOUN",
+"category": "word",
+"lemma": "scissors",
+"surface": "scissors",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/ˈsɪzərz/",
+"syllables": "SCIS-sors",
+"stress_pos": 0,
+"meaning_ja": "はさみ",
+"tags": [
+"school",
+"home"
+],
+"example_en": "Please cut the paper with these scissors.",
+"example_ja": "このはさみで紙を切ってください。",
+"tts_text": "scissors"
+},
+{
+"id": "w_glue_NOUN",
+"category": "word",
+"lemma": "glue",
+"surface": "glue",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/ɡluː/",
+"syllables": "GLUE",
+"stress_pos": 0,
+"meaning_ja": "のり／接着剤",
+"tags": [
+"school",
+"home"
+],
+"example_en": "The children used glue to make a paper card.",
+"example_ja": "子どもたちはのりを使って紙のカードを作った。",
+"tts_text": "glue"
+},
+{
+"id": "w_tape_NOUN",
+"category": "word",
+"lemma": "tape",
+"surface": "tape",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/teɪp/",
+"syllables": "TAPE",
+"stress_pos": 0,
+"meaning_ja": "テープ",
+"tags": [
+"home",
+"school"
+],
+"example_en": "He fixed the torn page with clear tape.",
+"example_ja": "彼は破れたページを透明なテープで直した。",
+"tts_text": "tape"
+},
+{
+"id": "w_folder_NOUN",
+"category": "word",
+"lemma": "folder",
+"surface": "folder",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/ˈfoʊldər/",
+"syllables": "FOLD-er",
+"stress_pos": 0,
+"meaning_ja": "フォルダー／書類入れ",
+"tags": [
+"business",
+"school"
+],
+"example_en": "Keep all your homework in this blue folder.",
+"example_ja": "宿題は全部この青いフォルダーに入れておいて。",
+"tts_text": "folder"
+},
+{
+"id": "w_dictionary_NOUN",
+"category": "word",
+"lemma": "dictionary",
+"surface": "dictionary",
+"pos": "NOUN",
+"cefr": "A1",
+"ipa": "/ˈdɪkʃəneri/",
+"syllables": "DIC-tion-ar-y",
+"stress_pos": 0,
+"meaning_ja": "辞書",
+"tags": [
+"school"
+],
+"example_en": "I looked up the word in my English dictionary.",
+"example_ja": "その単語を英語の辞書で調べた。",
+"tts_text": "dictionary"
+},
+{
+"id": "w_magazine_NOUN",
+"category": "word",
+"lemma": "magazine",
+"surface": "magazine",
+"pos": "NOUN",
+"cefr": "A1",
+"ipa": "/ˌmæɡəˈziːn/",
+"syllables": "mag-a-ZINE",
+"stress_pos": 2,
+"meaning_ja": "雑誌",
+"tags": [
+"home"
+],
+"example_en": "She read a fashion magazine while waiting for the train.",
+"example_ja": "彼女は電車を待つ間ファッション雑誌を読んだ。",
+"tts_text": "magazine"
+},
+{
+"id": "w_newspaper_NOUN",
+"category": "word",
+"lemma": "newspaper",
+"surface": "newspaper",
+"pos": "NOUN",
+"cefr": "A1",
+"ipa": "/ˈnuːzpeɪpər/",
+"syllables": "NEWS-pa-per",
+"stress_pos": 0,
+"meaning_ja": "新聞",
+"tags": [
+"home"
+],
+"example_en": "My father reads the newspaper every morning with coffee.",
+"example_ja": "父は毎朝コーヒーと一緒に新聞を読む。",
+"tts_text": "newspaper"
+},
+{
+"id": "w_radio_NOUN",
+"category": "word",
+"lemma": "radio",
+"surface": "radio",
+"pos": "NOUN",
+"cefr": "A1",
+"ipa": "/ˈreɪdioʊ/",
+"syllables": "RA-di-o",
+"stress_pos": 0,
+"meaning_ja": "ラジオ",
+"tags": [
+"home"
+],
+"example_en": "They listened to music on the radio in the car.",
+"example_ja": "彼らは車の中でラジオの音楽を聴いた。",
+"tts_text": "radio"
+},
+{
+"id": "w_phone_NOUN",
+"category": "word",
+"lemma": "phone",
+"surface": "phone",
+"pos": "NOUN",
+"cefr": "A1",
+"ipa": "/foʊn/",
+"syllables": "PHONE",
+"stress_pos": 0,
+"meaning_ja": "電話",
+"tags": [
+"home"
+],
+"example_en": "My phone is almost out of battery again.",
+"example_ja": "私の電話はまた電池がほとんどない。",
+"tts_text": "phone"
+},
+{
+"id": "w_camera_NOUN",
+"category": "word",
+"lemma": "camera",
+"surface": "camera",
+"pos": "NOUN",
+"cefr": "A1",
+"ipa": "/ˈkæmərə/",
+"syllables": "CAM-er-a",
+"stress_pos": 0,
+"meaning_ja": "カメラ",
+"tags": [
+"travel"
+],
+"example_en": "She took photos of the mountains with her camera.",
+"example_ja": "彼女はカメラで山の写真を撮った。",
+"tts_text": "camera"
+},
+{
+"id": "w_television_NOUN",
+"category": "word",
+"lemma": "television",
+"surface": "television",
+"pos": "NOUN",
+"cefr": "A1",
+"ipa": "/ˈtelɪvɪʒn/",
+"syllables": "TEL-e-vi-sion",
+"stress_pos": 0,
+"meaning_ja": "テレビ",
+"tags": [
+"home"
+],
+"example_en": "We watched a movie on the television last night.",
+"example_ja": "昨夜テレビで映画を見た。",
+"tts_text": "television"
+},
+{
+"id": "w_remote_NOUN",
+"category": "word",
+"lemma": "remote",
+"surface": "remote",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/rɪˈmoʊt/",
+"syllables": "re-MOTE",
+"stress_pos": 1,
+"meaning_ja": "リモコン",
+"tags": [
+"home"
+],
+"example_en": "Can you hand me the remote on the sofa?",
+"example_ja": "ソファの上のリモコンを取ってくれる？",
+"tts_text": "remote"
+},
+{
+"id": "w_charger_NOUN",
+"category": "word",
+"lemma": "charger",
+"surface": "charger",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/ˈtʃɑːrdʒər/",
+"syllables": "CHARG-er",
+"stress_pos": 0,
+"meaning_ja": "充電器",
+"tags": [
+"home",
+"travel"
+],
+"example_en": "I forgot my phone charger at the hotel.",
+"example_ja": "ホテルに携帯の充電器を忘れた。",
+"tts_text": "charger"
+},
+{
+"id": "w_computer_NOUN",
+"category": "word",
+"lemma": "computer",
+"surface": "computer",
+"pos": "NOUN",
+"cefr": "A1",
+"ipa": "/kəmˈpjuːtər/",
+"syllables": "com-PU-ter",
+"stress_pos": 1,
+"meaning_ja": "コンピューター",
+"tags": [
+"business",
+"home"
+],
+"example_en": "He works on his computer all day at the office.",
+"example_ja": "彼はオフィスで一日中コンピューターで仕事をする。",
+"tts_text": "computer"
+},
+{
+"id": "w_keyboard_NOUN",
+"category": "word",
+"lemma": "keyboard",
+"surface": "keyboard",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/ˈkiːbɔːrd/",
+"syllables": "KEY-board",
+"stress_pos": 0,
+"meaning_ja": "キーボード",
+"tags": [
+"business",
+"home"
+],
+"example_en": "She typed the report quickly on her keyboard.",
+"example_ja": "彼女はキーボードですばやく報告書を打った。",
+"tts_text": "keyboard"
+},
+{
+"id": "w_screen_NOUN",
+"category": "word",
+"lemma": "screen",
+"surface": "screen",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/skriːn/",
+"syllables": "SCREEN",
+"stress_pos": 0,
+"meaning_ja": "画面",
+"tags": [
+"business",
+"home"
+],
+"example_en": "The words on the screen are too small to read.",
+"example_ja": "画面の文字が小さすぎて読めない。",
+"tts_text": "screen"
+},
+{
+"id": "w_mouse_NOUN",
+"category": "word",
+"lemma": "mouse",
+"surface": "mouse",
+"pos": "NOUN",
+"cefr": "A1",
+"ipa": "/maʊs/",
+"syllables": "MOUSE",
+"stress_pos": 0,
+"meaning_ja": "マウス／ネズミ",
+"tags": [
+"business",
+"animal"
+],
+"example_en": "He clicked the link with his computer mouse.",
+"example_ja": "彼はコンピューターのマウスでリンクをクリックした。",
+"tts_text": "mouse"
+},
+{
+"id": "w_printer_NOUN",
+"category": "word",
+"lemma": "printer",
+"surface": "printer",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/ˈprɪntər/",
+"syllables": "PRINT-er",
+"stress_pos": 0,
+"meaning_ja": "プリンター",
+"tags": [
+"business",
+"home"
+],
+"example_en": "The printer is out of paper again.",
+"example_ja": "プリンターがまた紙切れだ。",
+"tts_text": "printer"
+},
+{
+"id": "w_fan_NOUN",
+"category": "word",
+"lemma": "fan",
+"surface": "fan",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/fæn/",
+"syllables": "FAN",
+"stress_pos": 0,
+"meaning_ja": "扇風機／うちわ",
+"tags": [
+"home",
+"weather"
+],
+"example_en": "We turned on the fan because the room was hot.",
+"example_ja": "部屋が暑かったので扇風機をつけた。",
+"tts_text": "fan"
+},
+{
+"id": "w_heater_NOUN",
+"category": "word",
+"lemma": "heater",
+"surface": "heater",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/ˈhiːtər/",
+"syllables": "HEAT-er",
+"stress_pos": 0,
+"meaning_ja": "暖房器具／ヒーター",
+"tags": [
+"home",
+"weather"
+],
+"example_en": "Please turn on the heater; it is freezing inside.",
+"example_ja": "ヒーターをつけて、中が凍えるほど寒いから。",
+"tts_text": "heater"
+},
+{
+"id": "w_vacuum_NOUN",
+"category": "word",
+"lemma": "vacuum",
+"surface": "vacuum",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/ˈvækjuːm/",
+"syllables": "VAC-uum",
+"stress_pos": 0,
+"meaning_ja": "掃除機",
+"tags": [
+"home"
+],
+"example_en": "She used the vacuum to clean the living room rug.",
+"example_ja": "彼女は掃除機で居間のじゅうたんを掃除した。",
+"tts_text": "vacuum"
+},
+{
+"id": "w_iron_NOUN",
+"category": "word",
+"lemma": "iron",
+"surface": "iron",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/ˈaɪərn/",
+"syllables": "I-ron",
+"stress_pos": 0,
+"meaning_ja": "アイロン／鉄",
+"tags": [
+"home",
+"clothes"
+],
+"example_en": "He pressed his shirt with a hot iron.",
+"example_ja": "彼は熱いアイロンでシャツをかけた。",
+"tts_text": "iron"
+},
+{
+"id": "w_hanger_NOUN",
+"category": "word",
+"lemma": "hanger",
+"surface": "hanger",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/ˈhæŋər/",
+"syllables": "HANG-er",
+"stress_pos": 0,
+"meaning_ja": "ハンガー",
+"tags": [
+"home",
+"clothes"
+],
+"example_en": "Hang your jacket on the wooden hanger.",
+"example_ja": "上着は木のハンガーに掛けてね。",
+"tts_text": "hanger"
+},
+{
+"id": "w_ladder_NOUN",
+"category": "word",
+"lemma": "ladder",
+"surface": "ladder",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/ˈlædər/",
+"syllables": "LAD-der",
+"stress_pos": 0,
+"meaning_ja": "はしご",
+"tags": [
+"home"
+],
+"example_en": "He climbed the ladder to fix the roof.",
+"example_ja": "彼は屋根を直すためにはしごを登った。",
+"tts_text": "ladder"
+},
+{
+"id": "w_hammer_NOUN",
+"category": "word",
+"lemma": "hammer",
+"surface": "hammer",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/ˈhæmər/",
+"syllables": "HAM-mer",
+"stress_pos": 0,
+"meaning_ja": "金づち／ハンマー",
+"tags": [
+"home"
+],
+"example_en": "He used a hammer to put the nail in the wall.",
+"example_ja": "彼は金づちで壁にくぎを打った。",
+"tts_text": "hammer"
+},
+{
+"id": "w_nail_NOUN",
+"category": "word",
+"lemma": "nail",
+"surface": "nail",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/neɪl/",
+"syllables": "NAIL",
+"stress_pos": 0,
+"meaning_ja": "くぎ／つめ",
+"tags": [
+"home",
+"body"
+],
+"example_en": "He hammered a small nail into the wood.",
+"example_ja": "彼は小さなくぎを木に打ち込んだ。",
+"tts_text": "nail"
+},
+{
+"id": "w_string_NOUN",
+"category": "word",
+"lemma": "string",
+"surface": "string",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/strɪŋ/",
+"syllables": "STRING",
+"stress_pos": 0,
+"meaning_ja": "ひも",
+"tags": [
+"home"
+],
+"example_en": "She tied the box with a piece of string.",
+"example_ja": "彼女は箱を一本のひもで縛った。",
+"tts_text": "string"
+},
+{
+"id": "w_rope_NOUN",
+"category": "word",
+"lemma": "rope",
+"surface": "rope",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/roʊp/",
+"syllables": "ROPE",
+"stress_pos": 0,
+"meaning_ja": "ロープ／綱",
+"tags": [
+"home"
+],
+"example_en": "They pulled the boat in with a thick rope.",
+"example_ja": "彼らは太いロープでボートを引き寄せた。",
+"tts_text": "rope"
+},
+{
+"id": "w_needle_NOUN",
+"category": "word",
+"lemma": "needle",
+"surface": "needle",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/ˈniːdl/",
+"syllables": "NEE-dle",
+"stress_pos": 0,
+"meaning_ja": "針",
+"tags": [
+"home",
+"clothes"
+],
+"example_en": "She fixed the button with a needle and thread.",
+"example_ja": "彼女は針と糸でボタンを直した。",
+"tts_text": "needle"
+},
+{
+"id": "w_thread_NOUN",
+"category": "word",
+"lemma": "thread",
+"surface": "thread",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/θred/",
+"syllables": "THREAD",
+"stress_pos": 0,
+"meaning_ja": "糸",
+"tags": [
+"home",
+"clothes"
+],
+"example_en": "I need some white thread to sew this shirt.",
+"example_ja": "このシャツを縫うのに白い糸が要る。",
+"tts_text": "thread"
+},
+{
+"id": "w_lid_NOUN",
+"category": "word",
+"lemma": "lid",
+"surface": "lid",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/lɪd/",
+"syllables": "LID",
+"stress_pos": 0,
+"meaning_ja": "ふた",
+"tags": [
+"home",
+"food"
+],
+"example_en": "Please put the lid back on the pot.",
+"example_ja": "鍋にふたを戻してください。",
+"tts_text": "lid"
+},
+{
+"id": "w_handle_NOUN",
+"category": "word",
+"lemma": "handle",
+"surface": "handle",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/ˈhændl/",
+"syllables": "HAN-dle",
+"stress_pos": 0,
+"meaning_ja": "取っ手／ハンドル",
+"tags": [
+"home"
+],
+"example_en": "The handle of the cup is too hot to touch.",
+"example_ja": "カップの取っ手が熱すぎて触れない。",
+"tts_text": "handle"
+},
+{
+"id": "w_switch_NOUN",
+"category": "word",
+"lemma": "switch",
+"surface": "switch",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/swɪtʃ/",
+"syllables": "SWITCH",
+"stress_pos": 0,
+"meaning_ja": "スイッチ",
+"tags": [
+"home"
+],
+"example_en": "The light switch is next to the bedroom door.",
+"example_ja": "電気のスイッチは寝室のドアのそばにある。",
+"tts_text": "switch"
+},
+{
+"id": "w_plug_NOUN",
+"category": "word",
+"lemma": "plug",
+"surface": "plug",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/plʌɡ/",
+"syllables": "PLUG",
+"stress_pos": 0,
+"meaning_ja": "プラグ／差し込み",
+"tags": [
+"home"
+],
+"example_en": "Please push the plug into the wall socket.",
+"example_ja": "プラグを壁のコンセントに差し込んでください。",
+"tts_text": "plug"
+},
+{
+"id": "w_wire_NOUN",
+"category": "word",
+"lemma": "wire",
+"surface": "wire",
+"pos": "NOUN",
+"cefr": "A2",
+"ipa": "/ˈwaɪər/",
+"syllables": "WIRE",
+"stress_pos": 0,
+"meaning_ja": "針金／電線",
+"tags": [
+"home"
+],
+"example_en": "Be careful; that wire on the floor is dangerous.",
+"example_ja": "気をつけて、床のあの電線は危ない。",
+"tts_text": "wire"
+},
+{
+"id": "w_blade_NOUN",
+"category": "word",
+"lemma": "blade",
+"surface": "blade",
+"pos": "NOUN",
+"cefr": "B1",
+"ipa": "/bleɪd/",
+"syllables": "BLADE",
+"stress_pos": 0,
+"meaning_ja": "刃",
+"tags": [
+"home"
+],
+"example_en": "The blade of this knife is very sharp.",
+"example_ja": "このナイフの刃はとても鋭い。",
+"tts_text": "blade"
+}
+]

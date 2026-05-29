@@ -18,8 +18,8 @@ DATA_DIR = PROJECT_ROOT / "output" / "data"
 APP_DATA_DIR = PROJECT_ROOT / "output" / "app" / "data"
 OUT_HTML = PROJECT_ROOT / "output" / "app" / "index.html"
 
-# テーマ設定（オープン項目: 青系 #4a90e2 を採用）
-APP_NAME = "英会話 Quiz"
+# テーマ設定（オープン項目16: アプリ名=Listening Quiz / 配色=緑系 #52b788）
+APP_NAME = "Listening Quiz"
 
 HTML_TEMPLATE = r"""<!DOCTYPE html>
 <html lang="ja">
@@ -35,12 +35,12 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     --border: #364153;
     --text: #e6edf3;
     --muted: #8b98ad;
-    --accent: #4a90e2;
-    --accent-soft: #2d4a6b;
-    --accent-text: #0d1117;
-    --good: #52b788;
-    --good-bg: #1e3a2c;
-    --good-text: #b8f0d0;
+    --accent: #52b788;
+    --accent-soft: #234a3a;
+    --accent-text: #08130d;
+    --good: #74d3a0;
+    --good-bg: #15362a;
+    --good-text: #c2f3d7;
     --bad: #e5615e;
     --bad-bg: #3a1e1e;
     --bad-text: #f0c8c8;
@@ -123,7 +123,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     margin: 6px 4px; display: inline-flex; align-items: center; gap: 8px;
     font-weight: bold; box-shadow: 0 4px 16px rgba(74,144,226,0.3); font-family: inherit;
   }
-  .play-btn:hover { background: #5b9ee8; }
+  .play-btn:hover { background: #65c997; }
   .play-btn:active { transform: scale(0.97); }
   .play-btn.small { padding: 8px 14px; font-size: 0.88em; box-shadow: none; }
   .play-btn.ghost { background: var(--panel2); color: var(--text); box-shadow: none; border: 1px solid var(--border); }
@@ -166,7 +166,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     border: none; border-radius: 10px; font-size: 1em; font-weight: bold;
     cursor: pointer; margin-top: 10px; font-family: inherit;
   }
-  .next-btn:hover { background: #5b9ee8; }
+  .next-btn:hover { background: #65c997; }
   .next-btn:active { transform: scale(0.99); }
 
   .progress-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; margin-bottom: 14px; }
@@ -941,7 +941,7 @@ function renderCatBlock(cat) {
   const modesForCat = Object.entries(MODES).filter(([_, m]) => m.cat === cat);
   const blocks = modesForCat.map(([name, m]) => `
     <div style="margin-top:12px;">
-      <h4 style="margin-bottom:6px; color:#7fb3ee; font-size:0.95em;">${m.icon} ${m.title}</h4>
+      <h4 style="margin-bottom:6px; color:#8ad9b0; font-size:0.95em;">${m.icon} ${m.title}</h4>
       ${renderModeProgress(computeSrsSummary(pool, name), total)}
     </div>`).join('');
   return `<div class="card"><h3 style="margin-bottom:6px; color:var(--accent);">${CAT_LABELS[cat]} (${total}件)</h3>${blocks}</div>`;
