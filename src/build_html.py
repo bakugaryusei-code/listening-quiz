@@ -1223,7 +1223,7 @@ function renderResult() {
     return `<div style="padding:10px; background:var(--panel2); border-radius:8px; margin-bottom:6px; display:flex; justify-content:space-between; gap:8px; align-items:center;">
       <div style="flex:1; min-width:0;">${icon} <strong>${escapeHtml(getSurface(target))}</strong>${masterIcon}
         <span style="color:var(--muted); margin-left:8px; font-size:0.9em;">= ${escapeHtml(target.meaning_ja)}</span></div>
-      <div class="small-text" style="white-space:nowrap;">${interval}日後<br>${nextDate}</div></div>`;
+      <div class="small-text" style="white-space:nowrap;">${interval|0}日後<br>${escapeHtml(nextDate || '')}</div></div>`;
   }).join('');
 
   app.innerHTML = `
@@ -1322,7 +1322,10 @@ function renderDashboard() {
   Object.entries(MODES).forEach(([n, m]) => MODE_LABELS_SHORT[n] = `${CAT_LABELS[m.cat]} ${m.icon}`);
   const histRows = progress.history.slice(0, 10).map(h => {
     const pct = Math.round((h.score / h.total) * 100);
-    return `<tr><td>${h.date}</td><td>${MODE_LABELS_SHORT[h.mode] || h.mode}</td><td>${h.score}/${h.total}</td><td>${pct}%</td></tr>`;
+    // 防御: 外部由来JSON(インポート/同期)の文字列フィールドは必ずエスケープ
+    const dateStr = escapeHtml(h.date);
+    const modeStr = MODE_LABELS_SHORT[h.mode] || escapeHtml(String(h.mode || ''));
+    return `<tr><td>${dateStr}</td><td>${modeStr}</td><td>${h.score|0}/${h.total|0}</td><td>${pct}%</td></tr>`;
   }).join('');
 
   app.innerHTML = `
