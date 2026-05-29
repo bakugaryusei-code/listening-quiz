@@ -327,7 +327,7 @@ let settings = loadSettings();
 const STORAGE_KEY = 'english.quiz.progress.v1';
 
 function defaultProgress() {
-  return { version: 1, sessions: 0, totalAnswered: 0, totalCorrect: 0, srs: {}, history: [] };
+  return { version: 1, sessions: 0, totalAnswered: 0, totalCorrect: 0, xp: 0, srs: {}, history: [] };
 }
 function loadProgress() {
   const raw = localStorage.getItem(STORAGE_KEY);
@@ -367,6 +367,23 @@ function sm2Update(srs, quality) {
   return s;
 }
 function isMastered(srs) { return srs && srs.repetitions >= 5 && srs.ef >= 2.5; }
+
+// ============================================================
+// プレイヤーレベル (XP)
+// ============================================================
+const XP_CORRECT = 10, XP_WRONG = 3;
+// レベルLに到達するのに必要な累積XP = 50*(L-1)^2 (二次曲線)
+function xpForLevel(L) { return 50 * (L - 1) * (L - 1); }
+function levelFromXp(xp) { return Math.floor(Math.sqrt(Math.max(0, xp) / 50)) + 1; }
+function levelTitle(lvl) {
+  if (lvl < 3) return 'リスナー見習い';
+  if (lvl < 6) return 'かけ出しリスナー';
+  if (lvl < 10) return '中級リスナー';
+  if (lvl < 15) return '上級リスナー';
+  if (lvl < 20) return 'リスニングマスター';
+  if (lvl < 30) return '達人リスナー';
+  return '伝説のリスナー';
+}
 
 // ============================================================
 // TTS (Web Speech API)
@@ -632,6 +649,19 @@ function computeSrsSummary(pool, mode) {
 function renderHome() {
   const progress = loadProgress();
   const accuracy = progress.totalAnswered > 0 ? Math.round((progress.totalCorrect / progress.totalAnswered) * 100) : 0;
+  const lvl = levelFromXp(progress.xp || 0);
+  const xpInto = (progress.xp || 0) - xpForLevel(lvl);
+  const xpSpan = xpForLevel(lvl + 1) - xpForLevel(lvl);
+  const xpPct = xpSpan > 0 ? Math.round(xpInto / xpSpan * 100) : 0;
+  const levelCard = `
+    <div class="card" style="padding:14px 18px;">
+      <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px;">
+        <span style="font-weight:bold; color:var(--accent); font-size:1.1em;">Lv.${lvl}</span>
+        <span class="small-text">${levelTitle(lvl)}</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${xpPct}%"></div></div>
+      <div class="small-text" style="text-align:right; margin-top:4px;">${xpInto} / ${xpSpan} XP（累計 ${progress.xp || 0}）</div>
+    </div>`;
   const cat = state.category;
   const pool = getPool(cat);
   const baseCount = basePool(cat).length;
@@ -658,6 +688,7 @@ function renderHome() {
   app.innerHTML = `
     <h1>__APP_NAME__</h1>
     <p class="subtitle">音と意味とスペルの3軸で鍛えるリスニング学習 / 1セッション=10問</p>
+    ${levelCard}
     <div class="category-tabs">${categoryTabs}</div>
     ${renderFilterPanel(cat, pool.length, baseCount)}
     <div class="card">
@@ -915,6 +946,15 @@ function finishSession() {
   p.sessions++;
   p.totalAnswered += state.sessionAnswers.length;
   p.totalCorrect += state.sessionScore;
+
+  // XP / レベル
+  const wrongCount = state.sessionAnswers.length - state.sessionScore;
+  const xpGained = state.sessionScore * XP_CORRECT + wrongCount * XP_WRONG;
+  const prevLevel = levelFromXp(p.xp || 0);
+  p.xp = (p.xp || 0) + xpGained;
+  const newLevel = levelFromXp(p.xp);
+  state.sessionXpGained = xpGained;
+  state.leveledUp = newLevel > prevLevel ? newLevel : 0;
   state.sessionAnswers.forEach(a => {
     const key = `${a.itemId}::${state.mode}`;
     p.srs[key] = sm2Update(p.srs[key] || newSrsState(), a.correct ? 4 : 2);
@@ -932,6 +972,24 @@ function renderResult() {
   let msg = pct === 100 ? '🎉 完璧！' : pct >= 80 ? '素晴らしい!' : pct >= 60 ? 'よくできました'
           : pct >= 40 ? '練習を続けよう' : '何度でも挑戦できます';
   const progress = loadProgress();
+
+  // XP / レベル表示
+  const lvl = levelFromXp(progress.xp);
+  const into = progress.xp - xpForLevel(lvl);
+  const span = xpForLevel(lvl + 1) - xpForLevel(lvl);
+  const pctXp = span > 0 ? Math.round(into / span * 100) : 0;
+  const levelUpLine = state.leveledUp
+    ? `<p class="center" style="color:var(--accent); font-weight:bold; font-size:1.15em; margin-bottom:8px;">🎉 レベルアップ！ Lv.${state.leveledUp} ${levelTitle(state.leveledUp)}</p>`
+    : '';
+  const xpBlock = `
+    <div style="margin:14px 0 4px;">
+      <p class="center" style="color:var(--accent); font-weight:bold; margin-bottom:6px;">+${state.sessionXpGained || 0} XP</p>
+      ${levelUpLine}
+      <div style="display:flex; justify-content:space-between; font-size:0.8em; color:var(--muted); margin-bottom:4px;">
+        <span>Lv.${lvl} ${levelTitle(lvl)}</span><span>${into} / ${span} XP</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${pctXp}%"></div></div>
+    </div>`;
   const itemRows = state.sessionAnswers.map((a, i) => {
     const target = state.questions[i].target;
     const srs = getSrs(progress, target.id, state.mode);
@@ -950,7 +1008,8 @@ function renderResult() {
     <div class="card">
       <div class="result-score">${score}/${total}</div>
       <p class="result-message">${msg} (${pct}%)</p>
-      <p class="small-text center" style="margin-bottom:16px;">正解 → 次の復習が先に延長 / 不正解 → 翌日に再出題</p>
+      ${xpBlock}
+      <p class="small-text center" style="margin:14px 0 16px;">正解 → 次の復習が先に延長 / 不正解 → 翌日に再出題</p>
       ${itemRows}
       <button class="next-btn" id="restart-btn" style="margin-top:20px;">もう一度 (新セット)</button>
       <button class="next-btn" id="home-btn" style="margin-top:8px; background:var(--panel2); color:var(--text);">ホームへ</button>
