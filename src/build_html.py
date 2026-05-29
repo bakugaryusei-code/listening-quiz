@@ -372,9 +372,17 @@ function isMastered(srs) { return srs && srs.repetitions >= 5 && srs.ef >= 2.5; 
 // プレイヤーレベル (XP)
 // ============================================================
 const XP_CORRECT = 10, XP_WRONG = 3;
-// レベルLに到達するのに必要な累積XP = 50*(L-1)^2 (二次曲線)
-function xpForLevel(L) { return 50 * (L - 1) * (L - 1); }
-function levelFromXp(xp) { return Math.floor(Math.sqrt(Math.max(0, xp) / 50)) + 1; }
+// レベルLに到達するのに必要な累積XP = 150*(L-1)^2.3 (急峻な曲線・気長な育成)
+//   Lv2=150 / Lv5≈3,638 / Lv10≈23,488 / Lv20≈130,986 / Lv30≈346,423 / Lv50≈1.16M / Lv100≈5.84M
+//   1問+10XP想定(1セッション概ね70-93XP)。序盤は数セッション、中盤以降は1レベルに数時間〜数日。
+//   レベルは事実上カンストせず、はるか先(Lv100+)まで称号を用意。
+function xpForLevel(L) { return Math.round(150 * Math.pow(Math.max(0, L - 1), 2.3)); }
+// xpForLevel と必ず整合する逆算 (レベルは最大でも~100程度なので軽量ループ)
+function levelFromXp(xp) {
+  let L = 1;
+  while (xpForLevel(L + 1) <= xp) L++;
+  return L;
+}
 function levelTitle(lvl) {
   if (lvl < 3) return 'リスナー見習い';
   if (lvl < 6) return 'かけ出しリスナー';
@@ -382,7 +390,12 @@ function levelTitle(lvl) {
   if (lvl < 15) return '上級リスナー';
   if (lvl < 20) return 'リスニングマスター';
   if (lvl < 30) return '達人リスナー';
-  return '伝説のリスナー';
+  if (lvl < 40) return '英語耳の使い手';
+  if (lvl < 55) return '音感の賢者';
+  if (lvl < 70) return 'ヒアリングの達人';
+  if (lvl < 85) return '英語耳マイスター';
+  if (lvl < 100) return '伝説のリスナー';
+  return '神話のリスナー';
 }
 
 // ============================================================
