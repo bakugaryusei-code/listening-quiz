@@ -312,7 +312,16 @@ let settings = loadSettings();
 const STORAGE_KEY = 'english.quiz.progress.v1';
 
 function defaultProgress() {
-  return { version: 1, sessions: 0, totalAnswered: 0, totalCorrect: 0, xp: 0, srs: {}, history: [], updatedAt: 0 };
+  return {
+    version: 1, sessions: 0, totalAnswered: 0, totalCorrect: 0, xp: 0, srs: {}, history: [], updatedAt: 0,
+    // カテゴリ/品詞/CEFR/タグ別の累計正解数 (二つ名・実績バッジ判定用)
+    catCorrect: {}, posCorrect: {}, cefrCorrect: {}, tagCorrect: {},
+    // 音声モード vs 表示モードの成績
+    audioAnswered: 0, audioCorrect: 0, textAnswered: 0, textCorrect: 0,
+    // プレイ実績
+    maxCombo: 0, dayStreak: 0, lastPlayDate: '', morningSessions: 0, nightSessions: 0,
+    badges: [],
+  };
 }
 function loadProgress() {
   const raw = localStorage.getItem(STORAGE_KEY);
@@ -559,6 +568,9 @@ const Dropbox = (function() {
 // プレイヤーレベル (XP)
 // ============================================================
 const XP_CORRECT = 10, XP_WRONG = 3;
+// 連続正解コンボ: 正解で+1ずつ蓄積、不正解で-COMBO_DECAY(急減衰)。0未満にはならない(マイナスボーナスなし)。
+//   各正解のXP = XP_CORRECT + min(combo-1, COMBO_CAP-1)*COMBO_STEP
+const COMBO_STEP = 2, COMBO_CAP = 10, COMBO_DECAY = 3;
 // レベルLに到達するのに必要な累積XP = 150*(L-1)^2.3 (急峻な曲線・気長な育成)
 //   Lv2=150 / Lv5≈3,638 / Lv10≈23,488 / Lv20≈130,986 / Lv30≈346,423 / Lv50≈1.16M / Lv100≈5.84M
 //   1問+10XP想定(1セッション概ね70-93XP)。序盤は数セッション、中盤以降は1レベルに数時間〜数日。
@@ -571,19 +583,83 @@ function levelFromXp(xp) {
   return L;
 }
 function levelTitle(lvl) {
-  if (lvl < 3) return 'リスナー見習い';
-  if (lvl < 6) return 'かけ出しリスナー';
-  if (lvl < 10) return '中級リスナー';
-  if (lvl < 15) return '上級リスナー';
-  if (lvl < 20) return 'リスニングマスター';
-  if (lvl < 30) return '達人リスナー';
-  if (lvl < 40) return '英語耳の使い手';
-  if (lvl < 55) return '音感の賢者';
-  if (lvl < 70) return 'ヒアリングの達人';
-  if (lvl < 85) return '英語耳マイスター';
-  if (lvl < 100) return '伝説のリスナー';
-  return '神話のリスナー';
+  if (lvl < 3)   return '耳ならし';
+  if (lvl < 5)   return 'リスナー見習い';
+  if (lvl < 7)   return 'かけ出しリスナー';
+  if (lvl < 10)  return '初級リスナー';
+  if (lvl < 13)  return '中級リスナー';
+  if (lvl < 16)  return '中堅リスナー';
+  if (lvl < 20)  return '上級リスナー';
+  if (lvl < 25)  return 'リスニングマスター';
+  if (lvl < 30)  return '熟練リスナー';
+  if (lvl < 37)  return '達人リスナー';
+  if (lvl < 45)  return '英語耳の使い手';
+  if (lvl < 55)  return '音感の賢者';
+  if (lvl < 65)  return '聴覚の求道者';
+  if (lvl < 75)  return 'ヒアリングの達人';
+  if (lvl < 85)  return '英語耳マイスター';
+  if (lvl < 95)  return '超越リスナー';
+  if (lvl < 110) return '伝説のリスナー';
+  if (lvl < 130) return '神話のリスナー';
+  return '音の神';
 }
+
+// --- 二つ名 (接頭辞): カテゴリ別の累計正解数で多段進化 ---
+const CAT_SUBTITLES = {
+  word:   [[20,'語彙の'],[100,'語彙巧者の'],[300,'語彙王の'],[700,'辞書いらずの'],[1500,'言葉の賢者の']],
+  phrase: [[20,'熟語の'],[100,'熟語使いの'],[300,'連語マスターの'],[700,'句の達人の'],[1500,'熟達の']],
+  idiom:  [[20,'慣用句の'],[100,'言い回し巧者の'],[300,'イディオムハンターの'],[700,'ネイティブ感覚の'],[1500,'慣用の賢者の']],
+};
+const ALLROUND_SUBTITLES = [[300,'万能の'],[700,'全方位の'],[1500,'完全網羅の']];
+function tierFor(table, n) { let name = ''; for (const [th, t] of table) if (n >= th) name = t; return name; }
+// 一番伸びているカテゴリの段位を二つ名に。3カテゴリすべて高水準なら万能系を優先。
+function subTitle(p) {
+  const cc = p.catCorrect || {};
+  const w = cc.word || 0, ph = cc.phrase || 0, id = cc.idiom || 0;
+  const allr = tierFor(ALLROUND_SUBTITLES, Math.min(w, ph, id));
+  if (allr) return allr;
+  const top = [['word', w], ['phrase', ph], ['idiom', id]].sort((a, b) => b[1] - a[1])[0];
+  return tierFor(CAT_SUBTITLES[top[0]], top[1]);
+}
+// レベル称号 + 二つ名 を結合した完全な称号
+function fullTitle(p, lvl) { return subTitle(p) + levelTitle(lvl); }
+
+// --- 実績バッジ ---
+function countMastered(p) {
+  let n = 0; for (const k in (p.srs || {})) if (isMastered(p.srs[k])) n++; return n;
+}
+// 各バッジ: { id, icon, name, desc, test(p)->bool }
+const BADGES = [
+  // 品詞 (単語のみ品詞情報あり)
+  { id: 'verb',   icon: '🏃', name: '動作の達人',     desc: '動詞を150問正解',   test: p => (p.posCorrect.VERB||0) >= 150 },
+  { id: 'noun',   icon: '📦', name: '物の名の番人',   desc: '名詞を150問正解',   test: p => (p.posCorrect.NOUN||0) >= 150 },
+  { id: 'adj',    icon: '🎨', name: '彩りの詩人',     desc: '形容詞を120問正解', test: p => (p.posCorrect.ADJ||0)  >= 120 },
+  { id: 'adv',    icon: '✨', name: 'ニュアンスの匠', desc: '副詞を80問正解',    test: p => (p.posCorrect.ADV||0)  >= 80 },
+  // CEFR (難易度帯)
+  { id: 'b2',     icon: '🎓', name: '上級ハンター',   desc: 'B2語を100問正解',   test: p => (p.cefrCorrect.B2||0) >= 100 },
+  { id: 'a1base', icon: '🧱', name: '基礎の鬼',       desc: 'A1語を200問正解',   test: p => (p.cefrCorrect.A1||0) >= 200 },
+  // タグ (トピック・機能・スタイル)
+  { id: 'biz',    icon: '💼', name: 'ビジネスエリート', desc: 'ビジネス系を100問正解', test: p => (p.tagCorrect.business||0) >= 100 },
+  { id: 'travel', icon: '✈️', name: '旅人',           desc: '旅行系を80問正解',  test: p => (p.tagCorrect.travel||0) >= 80 },
+  { id: 'food',   icon: '🍽', name: 'グルメ',         desc: '食べ物系を60問正解', test: p => (p.tagCorrect.food||0) >= 60 },
+  { id: 'emotion',icon: '💗', name: '共感者',         desc: '感情系を60問正解',  test: p => (p.tagCorrect.emotion||0) >= 60 },
+  { id: 'slang',  icon: '😎', name: 'ストリート',     desc: 'スラングを30問正解', test: p => (p.tagCorrect.slang||0) >= 30 },
+  { id: 'polite', icon: '🎩', name: '礼儀の人',       desc: '丁寧表現を80問正解', test: p => (p.tagCorrect.polite||0) >= 80 },
+  // モード (聴く vs 読む)
+  { id: 'ear',    icon: '👂', name: '真の英語耳',     desc: '音声モードで300問正解', test: p => (p.audioCorrect||0) >= 300 },
+  { id: 'eye',    icon: '⚡', name: '速読家',         desc: '表示モードで300問正解', test: p => (p.textCorrect||0) >= 300 },
+  // プレイ実績
+  { id: 'perfect',icon: '💯', name: 'パーフェクト',   desc: '1セッション全問連続正解(コンボ10)', test: p => (p.maxCombo||0) >= 10 },
+  { id: 'streak7',icon: '🔥', name: '皆勤賞',         desc: '7日連続でプレイ',   test: p => (p.dayStreak||0) >= 7 },
+  { id: 'streak30',icon:'🏅', name: '継続は力',       desc: '30日連続でプレイ',  test: p => (p.dayStreak||0) >= 30 },
+  { id: 'master100',icon:'🏆',name: '百冠',           desc: '100項目をマスター', test: p => countMastered(p) >= 100 },
+  { id: 'volume1k',icon: '⛰', name: '千本ノック',     desc: '累計1000問に回答',  test: p => (p.totalAnswered||0) >= 1000 },
+  { id: 'volume5k',icon: '🗻', name: '万里の道',       desc: '累計5000問に回答',  test: p => (p.totalAnswered||0) >= 5000 },
+  { id: 'morning',icon: '🌅', name: '早起き鳥',       desc: '朝(5〜10時)に20セッション', test: p => (p.morningSessions||0) >= 20 },
+  { id: 'night',  icon: '🌙', name: '夜更かし族',     desc: '夜(22〜4時)に20セッション', test: p => (p.nightSessions||0) >= 20 },
+  { id: 'devoted',icon: '📚', name: '努力家',         desc: '100セッション完了', test: p => (p.sessions||0) >= 100 },
+];
+function earnedBadgeIds(p) { return BADGES.filter(b => b.test(p)).map(b => b.id); }
 
 // ============================================================
 // TTS (Web Speech API)
@@ -844,6 +920,28 @@ function computeSrsSummary(pool, mode) {
 }
 
 // ============================================================
+// 実績バッジ一覧
+// ============================================================
+function renderBadgeShowcase(p) {
+  const earned = new Set(p.badges || []);
+  const got = BADGES.filter(b => earned.has(b.id)).length;
+  const cells = BADGES.map(b => {
+    const has = earned.has(b.id);
+    return `<div title="${escapeHtml(b.name)}：${escapeHtml(b.desc)}" style="display:flex; flex-direction:column; align-items:center; gap:3px; padding:8px 4px; border-radius:8px; background:var(--panel2); opacity:${has ? 1 : 0.4};">
+      <span style="font-size:1.5em; filter:${has ? 'none' : 'grayscale(1)'};">${b.icon}</span>
+      <span class="small-text" style="text-align:center; line-height:1.2;">${escapeHtml(b.name)}</span>
+    </div>`;
+  }).join('');
+  return `<div class="card">
+    <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px;">
+      <h3 style="color:var(--accent); margin:0;">実績バッジ</h3>
+      <span class="small-text">${got} / ${BADGES.length}</span>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(78px,1fr)); gap:8px;">${cells}</div>
+  </div>`;
+}
+
+// ============================================================
 // ホーム画面
 // ============================================================
 function renderHome() {
@@ -857,11 +955,12 @@ function renderHome() {
     <div class="card" style="padding:14px 18px;">
       <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px;">
         <span style="font-weight:bold; color:var(--accent); font-size:1.1em;">Lv.${lvl}</span>
-        <span class="small-text">${levelTitle(lvl)}</span>
+        <span class="small-text">${escapeHtml(fullTitle(progress, lvl))}</span>
       </div>
       <div class="progress-bar"><div class="progress-fill" style="width:${xpPct}%"></div></div>
       <div class="small-text" style="text-align:right; margin-top:4px;">${xpInto} / ${xpSpan} XP（累計 ${progress.xp || 0}）</div>
     </div>`;
+  const badgeShowcase = renderBadgeShowcase(progress);
   const cat = state.category;
   const pool = getPool(cat);
   const baseCount = basePool(cat).length;
@@ -889,6 +988,7 @@ function renderHome() {
     <h1>Listening Quiz</h1>
     <p class="subtitle">音と意味とスペルの3軸で鍛えるリスニング学習 / 1セッション=10問</p>
     ${levelCard}
+    ${badgeShowcase}
     <div class="category-tabs">${categoryTabs}</div>
     ${renderFilterPanel(cat, pool.length, baseCount)}
     <div class="card">
@@ -1103,7 +1203,11 @@ function handleAnswer(idx) {
   const correct = (idx === q.correctIndex);
   if (correct) state.sessionScore++;
   playSound(correct ? 'correct' : 'wrong');
-  state.sessionAnswers.push({ itemId: target.id, correct });
+  state.sessionAnswers.push({
+    itemId: target.id, correct,
+    category: target.category, pos: target.pos || null, cefr: target.cefr || null,
+    tags: target.tags || [], useAudio: isAudioMode(state.mode),
+  });
 
   app.querySelectorAll('.choice').forEach((c, i) => {
     c.classList.add('disabled');
@@ -1147,19 +1251,62 @@ function finishSession() {
   p.totalAnswered += state.sessionAnswers.length;
   p.totalCorrect += state.sessionScore;
 
-  // XP / レベル
-  const wrongCount = state.sessionAnswers.length - state.sessionScore;
-  const xpGained = state.sessionScore * XP_CORRECT + wrongCount * XP_WRONG;
+  // XP / レベル / コンボ (回答順に再生してコンボボーナスを計算)
+  let combo = 0, xpGained = 0, sessionMaxCombo = 0;
+  state.sessionAnswers.forEach(a => {
+    if (a.correct) {
+      combo += 1;
+      if (combo > sessionMaxCombo) sessionMaxCombo = combo;
+      xpGained += XP_CORRECT + Math.min(combo - 1, COMBO_CAP - 1) * COMBO_STEP;
+    } else {
+      combo = Math.max(0, combo - COMBO_DECAY); // 急減衰・マイナスにはしない
+      xpGained += XP_WRONG;
+    }
+  });
   const prevLevel = levelFromXp(p.xp || 0);
   p.xp = (p.xp || 0) + xpGained;
   const newLevel = levelFromXp(p.xp);
   state.sessionXpGained = xpGained;
+  state.sessionMaxCombo = sessionMaxCombo;
   state.leveledUp = newLevel > prevLevel ? newLevel : 0;
+  p.maxCombo = Math.max(p.maxCombo || 0, sessionMaxCombo);
+
+  // カテゴリ/品詞/CEFR/タグ別の正解カウント + 音声/表示モード成績 + SRS更新
+  if (!p.catCorrect) p.catCorrect = {}; if (!p.posCorrect) p.posCorrect = {};
+  if (!p.cefrCorrect) p.cefrCorrect = {}; if (!p.tagCorrect) p.tagCorrect = {};
   state.sessionAnswers.forEach(a => {
+    if (a.correct) {
+      if (a.category) p.catCorrect[a.category] = (p.catCorrect[a.category] || 0) + 1;
+      if (a.pos)      p.posCorrect[a.pos]      = (p.posCorrect[a.pos] || 0) + 1;
+      if (a.cefr)     p.cefrCorrect[a.cefr]    = (p.cefrCorrect[a.cefr] || 0) + 1;
+      (a.tags || []).forEach(t => { p.tagCorrect[t] = (p.tagCorrect[t] || 0) + 1; });
+    }
+    if (a.useAudio) { p.audioAnswered = (p.audioAnswered||0)+1; if (a.correct) p.audioCorrect = (p.audioCorrect||0)+1; }
+    else            { p.textAnswered  = (p.textAnswered||0)+1;  if (a.correct) p.textCorrect  = (p.textCorrect||0)+1; }
     const key = `${a.itemId}::${state.mode}`;
     p.srs[key] = sm2Update(p.srs[key] || newSrsState(), a.correct ? 4 : 2);
   });
-  p.history.unshift({ date: today(), mode: state.mode, score: state.sessionScore, total: state.sessionAnswers.length });
+
+  // 連続プレイ日数
+  const td = today();
+  if (p.lastPlayDate !== td) {
+    const yd = (() => { const d = new Date(); d.setDate(d.getDate() - 1);
+      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; })();
+    p.dayStreak = (p.lastPlayDate === yd) ? (p.dayStreak || 0) + 1 : 1;
+    p.lastPlayDate = td;
+  }
+  // 時間帯
+  const hr = new Date().getHours();
+  if (hr >= 5 && hr < 10) p.morningSessions = (p.morningSessions || 0) + 1;
+  if (hr >= 22 || hr < 4) p.nightSessions = (p.nightSessions || 0) + 1;
+
+  // 実績バッジ判定 (新規解除分を結果画面で表示)
+  const prevBadges = new Set(p.badges || []);
+  const earned = earnedBadgeIds(p);
+  state.newBadges = earned.filter(id => !prevBadges.has(id));
+  p.badges = earned;
+
+  p.history.unshift({ date: td, mode: state.mode, score: state.sessionScore, total: state.sessionAnswers.length });
   p.history = p.history.slice(0, 30);
   saveProgress(p);
   state.view = 'result';
@@ -1179,14 +1326,22 @@ function renderResult() {
   const span = xpForLevel(lvl + 1) - xpForLevel(lvl);
   const pctXp = span > 0 ? Math.round(into / span * 100) : 0;
   const levelUpLine = state.leveledUp
-    ? `<p class="center" style="color:var(--accent); font-weight:bold; font-size:1.15em; margin-bottom:8px;">🎉 レベルアップ！ Lv.${state.leveledUp} ${levelTitle(state.leveledUp)}</p>`
+    ? `<p class="center" style="color:var(--accent); font-weight:bold; font-size:1.15em; margin-bottom:8px;">🎉 レベルアップ！ Lv.${state.leveledUp} ${escapeHtml(fullTitle(progress, state.leveledUp))}</p>`
+    : '';
+  const comboLine = (state.sessionMaxCombo || 0) >= 3
+    ? `<p class="center small-text" style="margin-bottom:6px;">🔥 最大 ${state.sessionMaxCombo} コンボ</p>`
+    : '';
+  const newBadgeLine = (state.newBadges && state.newBadges.length)
+    ? `<p class="center" style="color:var(--accent); font-weight:bold; margin:8px 0;">🎖 実績解除！ ${state.newBadges.map(id => { const b = BADGES.find(x => x.id === id); return b ? escapeHtml(b.icon + ' ' + b.name) : ''; }).join(' / ')}</p>`
     : '';
   const xpBlock = `
     <div style="margin:14px 0 4px;">
       <p class="center" style="color:var(--accent); font-weight:bold; margin-bottom:6px;">+${state.sessionXpGained || 0} XP</p>
+      ${comboLine}
       ${levelUpLine}
+      ${newBadgeLine}
       <div style="display:flex; justify-content:space-between; font-size:0.8em; color:var(--muted); margin-bottom:4px;">
-        <span>Lv.${lvl} ${levelTitle(lvl)}</span><span>${into} / ${span} XP</span>
+        <span>Lv.${lvl} ${escapeHtml(fullTitle(progress, lvl))}</span><span>${into} / ${span} XP</span>
       </div>
       <div class="progress-bar"><div class="progress-fill" style="width:${pctXp}%"></div></div>
     </div>`;
