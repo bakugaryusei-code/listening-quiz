@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python",
+            "args": ["${CLAUDE_PROJECT_DIR}/.claude/hooks/git_sync_check.py"],
+            "timeout": 120,
+            "statusMessage": "GitHubと同期を確認中..."
+          }
+        ]
+      }
+    ]
+  }
+}
