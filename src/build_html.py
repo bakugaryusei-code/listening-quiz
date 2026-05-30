@@ -204,6 +204,21 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
   .chip.on { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
   .filter-group-label { font-size: 0.78em; color: var(--muted); margin: 8px 0 4px; }
 
+  /* 実績バッジ(折りたたみ) */
+  details.badge-card { padding: 0; }
+  details.badge-card > summary {
+    display: flex; justify-content: space-between; align-items: center;
+    cursor: pointer; list-style: none; padding: 16px 22px;
+    font-weight: bold; color: var(--accent);
+  }
+  details.badge-card > summary::-webkit-details-marker { display: none; }
+  .badge-chevron { display: inline-block; color: var(--muted); transition: transform 0.15s; }
+  details.badge-card[open] .badge-chevron { transform: rotate(180deg); }
+  .badge-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(78px, 1fr));
+    gap: 8px; padding: 0 22px 18px;
+  }
+
   /* 設定 */
   .setting-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
   .setting-row:last-child { border-bottom: none; }
@@ -957,13 +972,13 @@ function renderBadgeShowcase(p) {
       <span class="small-text" style="text-align:center; line-height:1.2;">${escapeHtml(b.name)}</span>
     </div>`;
   }).join('');
-  return `<div class="card">
-    <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px;">
-      <h3 style="color:var(--accent); margin:0;">実績バッジ</h3>
-      <span class="small-text">${got} / ${BADGES.length}</span>
-    </div>
-    <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(78px,1fr)); gap:8px;">${cells}</div>
-  </div>`;
+  return `<details class="card badge-card">
+    <summary>
+      <span>🎖 実績バッジ</span>
+      <span class="small-text" style="font-weight:normal;">${got} / ${BADGES.length} <span class="badge-chevron">▼</span></span>
+    </summary>
+    <div class="badge-grid">${cells}</div>
+  </details>`;
 }
 
 // ============================================================
